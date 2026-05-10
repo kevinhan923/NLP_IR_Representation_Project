@@ -18,6 +18,15 @@ class TwoStagePipeline:
         self.retriever.index(passages)
 
     def evaluate(self, queries: List[Dict], qrels: Dict[str, Dict[str, int]]) -> Dict:
+        if not queries:
+            return {
+                "single_mrr10": 0.0,
+                "para_mrr10": 0.0,
+                "delta_mrr10": 0.0,
+                "single_rankings": {},
+                "para_rankings": {},
+            }
+
         single_mrrs, para_mrrs = [], []
         single_rankings, para_rankings = {}, {}
 

@@ -21,6 +21,16 @@ def test_recall_at_k():
     assert recall_at_k(["a", "b", "c"], {"a": 1, "d": 1}, k=3) == 0.5
 
 
+def test_ndcg_at_k_perfect_ranking():
+    # Perfect ranking: relevant doc at rank 1
+    score = ndcg_at_k(["a", "b"], {"a": 1}, k=10)
+    assert abs(score - 1.0) < 1e-9
+
+
+def test_ndcg_at_k_no_relevant():
+    assert ndcg_at_k(["b", "c"], {"a": 1}, k=10) == 0.0
+
+
 # --- Pipeline smoke test ---
 
 PASSAGES = [

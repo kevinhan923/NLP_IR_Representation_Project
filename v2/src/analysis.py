@@ -34,6 +34,15 @@ def error_analysis(
             "doc_len": doc_len,
         })
 
+    if not results:
+        return {
+            "overall_delta": 0.0,
+            "by_query_length": {"short": None, "medium": None, "long": None},
+            "by_doc_length": {"short": None, "medium": None, "long": None},
+            "n_queries_para_wins": 0,
+            "n_queries_para_loses": 0,
+        }
+
     def bucket_mean(key, bins, labels):
         groups = {lbl: [] for lbl in labels}
         for r in results:
