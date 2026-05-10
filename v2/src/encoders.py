@@ -17,6 +17,8 @@ class TfidfEncoder:
         self._fitted = True
 
     def encode(self, texts: list[str]) -> np.ndarray:
+        if not self._fitted:
+            raise RuntimeError("Call fit() before encode()")
         sparse = self.vectorizer.transform(texts)
         return self.projector.transform(sparse).astype(np.float32)
 

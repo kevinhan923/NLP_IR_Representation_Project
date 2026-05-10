@@ -29,17 +29,18 @@ class BM25Retriever:
         self._bm25 = BM25Okapi(tokenized, k1=self.k1, b=self.b)
 
     def retrieve(self, query: str, top_k: int = 100) -> List[Dict]:
+        """Return up to top_k passages ranked by BM25 score.
+
+        Results may have score=0.0 for queries with no term overlap.
+        """
         if self._bm25 is None:
             raise RuntimeError("Call index() before retrieve()")
         tokens = _tokenize(query)
         scores = self._bm25.get_scores(tokens)
-        # Sort descending; only include passages with a positive score so
-        # documents with zero BM25 overlap are excluded from results.
         top_indices = np.argsort(scores)[::-1][:top_k]
         return [
             {**self._passages[i], "score": float(scores[i])}
             for i in top_indices
-            if scores[i] > 0
         ]
 
 
@@ -52,16 +53,16 @@ class DenseRetriever:
     """
 
     def __init__(self, model_name: str = "msmarco-distilbert-base-v4"):
-        from src.encoders import DenseEncoder
+        from .encoders import DenseEncoder
         self.encoder = DenseEncoder(model_name)
         self._index = None
         self._passages: List[Dict] = []
 
-    def index(self, passages: List[Dict], batch_size: int = 64):
+    def index(self, passages: List[Dict], batch_size: int = 64, show_progress: bool = False):
         import faiss
         self._passages = passages
         texts = [p["text"] for p in passages]
-        embeddings = self.encoder.encode(texts, batch_size=batch_size, show_progress=True)
+        embeddings = self.encoder.encode(texts, batch_size=batch_size, show_progress=show_progress)
         dim = embeddings.shape[1]
         self._index = faiss.IndexFlatIP(dim)
         self._index.add(embeddings.astype(np.float32))

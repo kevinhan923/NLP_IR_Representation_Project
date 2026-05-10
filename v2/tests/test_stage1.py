@@ -1,3 +1,4 @@
+import pytest
 from src.stage1 import BM25Retriever, DenseRetriever
 
 PASSAGES = [
@@ -12,7 +13,8 @@ def test_bm25_retriever_returns_ranked_ids():
     retriever.index(PASSAGES)
     results = retriever.retrieve("Paris museums", top_k=2)
     assert len(results) == 2
-    assert results[0]["id"] in {"p1", "p3"}
+    # p3 contains BOTH "Paris" AND "museums", should rank higher than p1
+    assert results[0]["id"] == "p3"
     ids = [r["id"] for r in results]
     assert "p2" not in ids
 
@@ -40,3 +42,15 @@ def test_dense_retriever_scores_are_descending():
     results = retriever.retrieve("museum art gallery", top_k=3)
     scores = [r["score"] for r in results]
     assert scores == sorted(scores, reverse=True)
+
+
+def test_bm25_raises_before_index():
+    retriever = BM25Retriever()
+    with pytest.raises(RuntimeError, match="index"):
+        retriever.retrieve("query")
+
+
+def test_dense_raises_before_index():
+    retriever = DenseRetriever(model_name="all-MiniLM-L6-v2")
+    with pytest.raises(RuntimeError, match="index"):
+        retriever.retrieve("query")
