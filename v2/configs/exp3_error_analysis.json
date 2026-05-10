@@ -1,0 +1,16 @@
+{
+  "name": "exp3_error_analysis",
+  "description": "Error analysis: when does paragraph reranking help by query/doc type?",
+  "dataset": "msmarco-passage",
+  "n_docs": 5000,
+  "n_queries": 200,
+  "seed": 42,
+  "stage1_options": ["bm25"],
+  "reranker": "crossencoder",
+  "reranker_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+  "segmenter": "structural",
+  "aggregation": "max",
+  "top_k_stage1": 100,
+  "top_k_stage2": 10,
+  "run_error_analysis": true
+}

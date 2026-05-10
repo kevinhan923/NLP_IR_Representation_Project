@@ -1,0 +1,15 @@
+{
+  "name": "exp1_encoder_ablation",
+  "description": "Does encoder quality flip the paragraph delta? TF-IDF vs BM25 vs dense bi-encoder at Stage 1.",
+  "dataset": "msmarco-passage",
+  "n_docs": 5000,
+  "n_queries": 100,
+  "seed": 42,
+  "stage1_options": ["bm25", "dense:msmarco-distilbert-base-v4"],
+  "reranker": "biencoder",
+  "reranker_model": "msmarco-distilbert-base-v4",
+  "segmenter": "structural",
+  "aggregation": "max",
+  "top_k_stage1": 100,
+  "top_k_stage2": 10
+}

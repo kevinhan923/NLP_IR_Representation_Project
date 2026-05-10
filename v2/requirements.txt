@@ -1,0 +1,10 @@
+sentence-transformers>=2.7.0
+rank-bm25>=0.2.2
+faiss-cpu>=1.7.4
+torch>=2.2.0
+ir-datasets>=0.5.5
+datasets>=2.18.0
+numpy>=1.26.0
+scikit-learn>=1.4.0
+scipy>=1.12.0
+tqdm>=4.66.0
