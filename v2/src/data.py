@@ -50,27 +50,87 @@ def load_msmarco_passage_sample(n_docs: int, n_queries: int, seed: int = 42):
 
         dataset = ir_datasets.load("msmarco-passage/dev/small")
 
-        # The corpus is large; read n_docs * 10 entries then sample down.
-        passages = []
-        for i, doc in enumerate(dataset.docs_iter()):
-            if i >= n_docs * 10:
-                break
-            passages.append({"id": doc.doc_id, "text": doc.text})
-        passages = random.sample(passages, min(n_docs, len(passages)))
-        passage_ids = {p["id"] for p in passages}
-
-        # Load queries
-        queries = []
-        for q in dataset.queries_iter():
-            queries.append({"id": q.query_id, "text": q.text})
-        queries = random.sample(queries, min(n_queries, len(queries)))
-        query_ids = {q["id"] for q in queries}
-
-        # Load qrels filtered to the sampled passages and queries
-        qrels = {}
+        # 1. Build qid -> {doc_id: rel} from full qrels so we can sample queries
+        #    that actually have judgments (dev/small has ~7437 qrels for ~6980
+        #    queries, so this is essentially every query — but be defensive).
+        full_qrels = {}
         for qrel in dataset.qrels_iter():
-            if qrel.query_id in query_ids and qrel.doc_id in passage_ids:
-                qrels.setdefault(qrel.query_id, {})[qrel.doc_id] = qrel.relevance
+            full_qrels.setdefault(qrel.query_id, {})[qrel.doc_id] = qrel.relevance
+
+        # 2. Sample queries from those with at least one positive judgment.
+        all_queries = [
+            q for q in dataset.queries_iter()
+            if any(r > 0 for r in full_qrels.get(q.query_id, {}).values())
+        ]
+        sampled_queries = random.sample(all_queries, min(n_queries, len(all_queries)))
+        query_ids = {q.query_id for q in sampled_queries}
+        queries = [{"id": q.query_id, "text": q.text} for q in sampled_queries]
+
+        # 3. Collect positive doc_ids for the sampled queries — these MUST
+        #    end up in the passage pool, otherwise qrels would be empty and
+        #    every metric would be 0 (the original bug).
+        sampled_qrels = {qid: full_qrels[qid] for qid in query_ids if qid in full_qrels}
+        positive_doc_ids = {
+            did for rels in sampled_qrels.values()
+            for did, rel in rels.items() if rel > 0
+        }
+
+        # 4. Fast path: fetch positives by id via docs_store (random access).
+        #    Falls through to the docs_iter scan below for any ids it can't
+        #    resolve (e.g. when ir_datasets is mocked in unit tests).
+        positives = []
+        unfetched = set(positive_doc_ids)
+        try:
+            store = dataset.docs_store()
+            for did in list(unfetched):
+                doc = store.get(did)
+                if doc is not None and getattr(doc, "doc_id", None) == did:
+                    positives.append({"id": doc.doc_id, "text": doc.text})
+                    unfetched.discard(did)
+        except Exception:
+            pass
+
+        # 5. One pass through docs_iter to (a) recover any unfetched positives
+        #    and (b) collect a distractor candidate pool. Stop as soon as we
+        #    have all positives AND a large enough distractor buffer.
+        n_distractors_target = max(0, n_docs - len(positive_doc_ids))
+        distractor_buffer = max(n_distractors_target * 5, n_distractors_target + 200)
+        distractor_pool = []
+        if unfetched or n_distractors_target > 0:
+            for doc in dataset.docs_iter():
+                if doc.doc_id in unfetched:
+                    positives.append({"id": doc.doc_id, "text": doc.text})
+                    unfetched.discard(doc.doc_id)
+                elif doc.doc_id not in positive_doc_ids:
+                    if len(distractor_pool) < distractor_buffer:
+                        distractor_pool.append({"id": doc.doc_id, "text": doc.text})
+                if not unfetched and len(distractor_pool) >= distractor_buffer:
+                    break
+
+        # 6. Combine positives + sampled distractors into the final pool.
+        #    If positives alone exceed n_docs, trim them down (unlikely).
+        if len(positives) > n_docs:
+            positives = random.sample(positives, n_docs)
+        n_distractors_actual = max(0, n_docs - len(positives))
+        distractors = random.sample(
+            distractor_pool, min(n_distractors_actual, len(distractor_pool))
+        )
+        passages = positives + distractors
+        random.shuffle(passages)
+
+        # 7. Filter qrels to passages that actually made it into the pool.
+        passage_ids = {p["id"] for p in passages}
+        qrels = {}
+        for qid, doc_rel in sampled_qrels.items():
+            kept = {did: rel for did, rel in doc_rel.items() if did in passage_ids}
+            if kept:
+                qrels[qid] = kept
+
+        # Loud failure beats silent zeros — surface upstream sampling bugs.
+        if not qrels:
+            raise RuntimeError(
+                "qrels empty after sampling — relevant docs missing from passage pool"
+            )
 
         return {"passages": passages, "queries": queries, "qrels": qrels}
 
