@@ -59,3 +59,33 @@ def test_biencoder_reranker_ranks_relevant_doc_first():
     irrelevant_doc = {"id": "d2", "text": "Python is a popular programming language for data science."}
     results = reranker.rerank(query, [irrelevant_doc, relevant_doc], top_k=2)
     assert results[0]["id"] == "d1"  # relevant doc should rank first
+
+
+# --- Aggregation tests ---
+
+from src.aggregation import MaxAggregator, TopKMeanAggregator, LearnedMLPAggregator
+import numpy as np
+
+
+def test_max_aggregator():
+    agg = MaxAggregator()
+    scores = np.array([0.3, 0.8, 0.5])
+    features = [{"position": 0, "length": 50}, {"position": 1, "length": 80}, {"position": 2, "length": 40}]
+    assert agg.aggregate(scores, features) == 0.8
+
+
+def test_topk_mean_aggregator():
+    agg = TopKMeanAggregator(k=2)
+    scores = np.array([0.3, 0.8, 0.5])
+    features = [{"position": 0, "length": 50}, {"position": 1, "length": 80}, {"position": 2, "length": 40}]
+    result = agg.aggregate(scores, features)
+    assert abs(result - (0.8 + 0.5) / 2) < 1e-5
+
+
+def test_learned_mlp_aggregator_predict_before_train():
+    agg = LearnedMLPAggregator()
+    scores = np.array([0.3, 0.8])
+    features = [{"position": 0, "length": 50, "overlap": 0.2}, {"position": 1, "length": 80, "overlap": 0.5}]
+    # Should return a float without crashing (uses random weights before training)
+    result = agg.aggregate(scores, features)
+    assert isinstance(result, float)
