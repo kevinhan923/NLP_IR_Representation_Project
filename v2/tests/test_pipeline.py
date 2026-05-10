@@ -1,3 +1,6 @@
+# aggregation.py (MaxAggregator, TopKMeanAggregator, LearnedMLPAggregator) provides
+# standalone aggregators for future experiment variants; rerank.py uses string-based
+# dispatch internally for its rerankers.
 from src.metrics import mrr_at_k, ndcg_at_k, recall_at_k
 from src.pipeline import TwoStagePipeline
 from src.stage1 import BM25Retriever
@@ -49,5 +52,8 @@ def test_pipeline_runs_and_returns_metrics():
     pipeline.index(PASSAGES)
     results = pipeline.evaluate(QUERIES, QRELS)
     assert "single_mrr10" in results
+    assert "single_ndcg10" in results
+    assert "single_recall100" in results
     assert "para_mrr10" in results
     assert isinstance(results["single_mrr10"], float)
+    assert isinstance(results["single_ndcg10"], float)

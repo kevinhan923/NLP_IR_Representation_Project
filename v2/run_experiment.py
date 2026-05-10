@@ -68,9 +68,13 @@ def run(config_path: str):
         pipeline.index(passages)
         metrics = pipeline.evaluate(queries, qrels)
 
-        print(f"  Single MRR@10:    {metrics['single_mrr10']:.4f}")
-        print(f"  Para   MRR@10:    {metrics['para_mrr10']:.4f}")
-        print(f"  Delta  MRR@10:    {metrics['delta_mrr10']:+.4f}")
+        print(f"  Single MRR@10:     {metrics['single_mrr10']:.4f}")
+        print(f"  Single NDCG@10:    {metrics['single_ndcg10']:.4f}")
+        print(f"  Single Recall@100: {metrics['single_recall100']:.4f}")
+        print(f"  Para   MRR@10:     {metrics['para_mrr10']:.4f}")
+        print(f"  Para   NDCG@10:    {metrics['para_ndcg10']:.4f}")
+        print(f"  Para   Recall@100: {metrics['para_recall100']:.4f}")
+        print(f"  Delta  MRR@10:     {metrics['delta_mrr10']:+.4f}")
 
         if cfg.get("run_error_analysis"):
             analysis = error_analysis(
@@ -89,8 +93,10 @@ def run(config_path: str):
         all_results[stage1_name] = metrics
 
     # Save results
-    os.makedirs("results", exist_ok=True)
-    out_path = f"results/{cfg['name']}_results.json"
+    _script_dir = os.path.dirname(os.path.abspath(__file__))
+    results_dir = os.path.join(_script_dir, "results")
+    os.makedirs(results_dir, exist_ok=True)
+    out_path = os.path.join(results_dir, f"{cfg['name']}_results.json")
     with open(out_path, "w") as f:
         save = {k: {m: v for m, v in r.items() if m not in ("single_rankings", "para_rankings")}
                 for k, r in all_results.items()}
