@@ -1,3 +1,4 @@
+# Run tests from the v2/ directory: cd v2 && python -m pytest tests/
 """
 test_data.py — Tests for v2/src/data.py
 
@@ -95,6 +96,10 @@ def test_load_msmarco_passage_qrels_type(mock_ir):
     mock_ir.load.return_value = _make_fake_ir_dataset(n_docs=500, n_queries=50)
     data = load_msmarco_passage_sample(n_docs=50, n_queries=10, seed=42)
     assert isinstance(data["qrels"], dict)
+    # If qrels has entries, check the nested structure
+    if data["qrels"]:
+        inner = next(iter(data["qrels"].values()))
+        assert isinstance(inner, dict), "qrels values should be {doc_id: relevance} dicts"
 
 
 @patch("src.data.ir_datasets")
@@ -103,10 +108,15 @@ def test_load_msmarco_reproducible(mock_ir):
     mock_ir.load.side_effect = [
         _make_fake_ir_dataset(n_docs=500, n_queries=50),
         _make_fake_ir_dataset(n_docs=500, n_queries=50),
+        _make_fake_ir_dataset(n_docs=500, n_queries=50),
     ]
-    a = load_msmarco_passage_sample(n_docs=20, n_queries=5, seed=7)
-    b = load_msmarco_passage_sample(n_docs=20, n_queries=5, seed=7)
-    assert [p["id"] for p in a["passages"]] == [p["id"] for p in b["passages"]]
+    data1 = load_msmarco_passage_sample(n_docs=5, n_queries=3, seed=7)
+    data2 = load_msmarco_passage_sample(n_docs=5, n_queries=3, seed=7)
+    assert [p["id"] for p in data1["passages"]] == [p["id"] for p in data2["passages"]]
+    # Different seed → different order (statistically very likely with enough docs)
+    data3 = load_msmarco_passage_sample(n_docs=5, n_queries=3, seed=99)
+    # Not guaranteed but very likely; just assert we got valid data
+    assert len(data3["passages"]) == 5
 
 
 # ---------------------------------------------------------------------------

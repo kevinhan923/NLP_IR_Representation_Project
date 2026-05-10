@@ -74,12 +74,14 @@ def load_msmarco_passage_sample(n_docs: int, n_queries: int, seed: int = 42):
 
         return {"passages": passages, "queries": queries, "qrels": qrels}
 
-    except Exception:
+    except (OSError, ConnectionError, ImportError, RuntimeError, Exception) as e:
+        import warnings
+        warnings.warn(f"Data loading failed ({type(e).__name__}: {e}); using synthetic data.")
         # Network/library unavailable — return synthetic data with correct shape.
         return _make_synthetic(n_docs, n_queries, seed)
 
 
-def load_beir_sample(dataset_name: str, n_docs: int, n_queries: int):
+def load_beir_sample(dataset_name: str, n_docs: int, n_queries: int, seed: int = 42):
     """Load a small BEIR dataset sample for OOD transfer evaluation.
 
     Falls back to synthetic data if HuggingFace ``datasets`` is unavailable.
@@ -88,6 +90,7 @@ def load_beir_sample(dataset_name: str, n_docs: int, n_queries: int):
         dataset_name: BEIR dataset name (e.g. ``"scifact"``).
         n_docs:       Number of passages to return.
         n_queries:    Number of queries to return.
+        seed:         Random seed for reproducibility (used in fallback).
 
     Returns:
         dict with keys ``"passages"``, ``"queries"``, ``"qrels"`` (qrels is
@@ -101,7 +104,7 @@ def load_beir_sample(dataset_name: str, n_docs: int, n_queries: int):
         queries_ds = load_dataset(f"BeIR/{dataset_name}", "queries", split="queries")
 
         passages = [
-            {"id": str(r["_id"]), "text": r["title"] + " " + r["text"]}
+            {"id": str(r["_id"]), "text": f"{r['title'].strip()} {r['text'].strip()}"}
             for r in corpus.select(range(min(n_docs, len(corpus))))
         ]
         queries = [
@@ -110,9 +113,11 @@ def load_beir_sample(dataset_name: str, n_docs: int, n_queries: int):
         ]
         return {"passages": passages, "queries": queries, "qrels": {}}
 
-    except Exception:
+    except (OSError, ConnectionError, ImportError, RuntimeError, Exception) as e:
+        import warnings
+        warnings.warn(f"Data loading failed ({type(e).__name__}: {e}); using synthetic data.")
         # Network/library unavailable — return synthetic data with correct shape.
-        return _make_synthetic(n_docs, n_queries, seed=0)
+        return _make_synthetic(n_docs, n_queries, seed)
 
 
 # ---------------------------------------------------------------------------
