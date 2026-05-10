@@ -1,0 +1,1115 @@
+{
+  "config": {
+    "data": {
+      "beir_root": "data/beir",
+      "beir_datasets": [
+        "nfcorpus",
+        "scifact",
+        "fiqa"
+      ]
+    },
+    "encoder": {
+      "name": "tfidf_projection",
+      "params": {
+        "max_features": 80000,
+        "projected_dim": 192,
+        "ngram_range": [
+          1,
+          2
+        ],
+        "min_df": 2,
+        "sublinear_tf": true,
+        "stop_words": "english"
+      }
+    },
+    "experiment": {
+      "candidate_pool": 100,
+      "fit_text_cap": 15000,
+      "metric_ks": [
+        10
+      ],
+      "stage1_max_features": 100000
+    },
+    "selected_setting": {
+      "segmentation": {
+        "name": "sent2_stride1",
+        "mode": "sentence_window",
+        "window_size": 2,
+        "stride": 1,
+        "min_words": 5
+      },
+      "aggregation": {
+        "name": "topk_mean_k3",
+        "mode": "topk_mean",
+        "top_k": 3
+      }
+    }
+  },
+  "results": {
+    "nfcorpus": {
+      "single_vector": {
+        "mrr@10": 0.49323799695316733,
+        "recall@10": 0.14082271229978502,
+        "precision@10": 0.21021671826625402,
+        "hit@10": 0.653250773993808,
+        "ndcg@10": 0.2954246090479448
+      },
+      "paragraph_level": {
+        "mrr@10": 0.43634453781512617,
+        "recall@10": 0.12354245935207388,
+        "precision@10": 0.17244582043343673,
+        "hit@10": 0.6037151702786377,
+        "ndcg@10": 0.24835529721553526
+      },
+      "query_level_comparison": {
+        "counts": {
+          "paragraph_better": 44,
+          "single_better": 85,
+          "tie": 194
+        },
+        "best_paragraph_wins": [
+          {
+            "query_id": "PLAIN-2550",
+            "query": "Barriers to Heart Disease Prevention",
+            "single_rr": 0.08333333333333333,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.9166666666666666,
+            "single_top_doc": "MED-2303",
+            "paragraph_top_doc": "MED-2529",
+            "paragraph_top_doc_score": 0.27661997079849243,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 1,
+            "best_para_score": 0.4040994644165039,
+            "best_para_text": "We tested the effects of feeding a diet very high in fiber from fruit and vegetables. The levels fed were those, which had originally inspired the dietary fiber hypothesis related to colon cancer and heart disease prevention and also may have been eaten early in human evolution."
+          },
+          {
+            "query_id": "PLAIN-371",
+            "query": "Any update on the scary in vitro avocado data?",
+            "single_rr": 0.2,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.8,
+            "single_top_doc": "MED-5010",
+            "paragraph_top_doc": "MED-861",
+            "paragraph_top_doc_score": 0.2943093130985896,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 9,
+            "best_para_score": 0.3269224464893341,
+            "best_para_text": "tertile 1: OR, 0.39; CI 0.16-0.92). The principal source of dietary MUFA was avocado intake."
+          },
+          {
+            "query_id": "PLAIN-468",
+            "query": "Is vitamin D3 (cholecalciferol) preferable to D2 (ergocalciferol)?",
+            "single_rr": 0.2,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.8,
+            "single_top_doc": "MED-4573",
+            "paragraph_top_doc": "MED-962",
+            "paragraph_top_doc_score": 0.4280128578344981,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 11,
+            "best_para_score": 0.4465034306049347,
+            "best_para_text": "weekly vitamin D2 (12% difference in effect, P = 0.66) and daily D2 vs. daily D3 (7%, P = 0.82)."
+          },
+          {
+            "query_id": "PLAIN-44",
+            "query": "Who Should be Careful About Curcumin?",
+            "single_rr": 0.25,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.75,
+            "single_top_doc": "MED-2786",
+            "paragraph_top_doc": "MED-2810",
+            "paragraph_top_doc_score": 0.3136422236760457,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 7,
+            "best_para_score": 0.35747030377388,
+            "best_para_text": "Pilot phase I clinical trials have shown curcumin to be safe even when consumed at a daily dose of 12g for 3 months. Other clinical trials suggest a potential therapeutic role for curcumin in diseases such as familial adenomatous polyposis, inflammatory bowel disease, ulcerative colitis, colon cancer, pancreatic cancer, hypercholesteremia, atherosclerosis, pancreatitis, psoriasis, chronic anterior uveitis and arthritis."
+          },
+          {
+            "query_id": "PLAIN-186",
+            "query": "Best Treatment for Constipation",
+            "single_rr": 0.25,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.75,
+            "single_top_doc": "MED-1016",
+            "paragraph_top_doc": "MED-3904",
+            "paragraph_top_doc_score": 0.36160798867543537,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 1,
+            "best_para_score": 0.4069749712944031,
+            "best_para_text": "psyllium for constipation. BACKGROUND: Treatment of chronic constipation remains challenging with 50% of patients dissatisfied with current therapy."
+          },
+          {
+            "query_id": "PLAIN-2660",
+            "query": "How Long to Detox From Fish Before Pregnancy?",
+            "single_rr": 0.25,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.75,
+            "single_top_doc": "MED-4465",
+            "paragraph_top_doc": "MED-4171",
+            "paragraph_top_doc_score": 0.23042942583560944,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 3,
+            "best_para_score": 0.2391725480556488,
+            "best_para_text": "Nevertheless, strong positive intra-individual correlations (Spearman's r=0.61-0.99) were seen for PCBs during the whole study period. Thus, if samples have been collected within the same relative narrow time window during pregnancy, PCB results from one single sampling occasion can be used in assessment of relative differences in body burdens during the whole pregnancy period."
+          },
+          {
+            "query_id": "PLAIN-827",
+            "query": "carcinogens",
+            "single_rr": 0.3333333333333333,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.6666666666666667,
+            "single_top_doc": "MED-4391",
+            "paragraph_top_doc": "MED-2106",
+            "paragraph_top_doc_score": 0.3487803836663564,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.3858610689640045,
+            "best_para_text": "Bile acids as carcinogens in human gastrointestinal cancers. Bile acids were first proposed to be carcinogens in 1939 and 1940."
+          },
+          {
+            "query_id": "PLAIN-270",
+            "query": "Is Caffeinated Tea Really Dehydrating?",
+            "single_rr": 0.5,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.5,
+            "single_top_doc": "MED-1648",
+            "paragraph_top_doc": "MED-4331",
+            "paragraph_top_doc_score": 0.21535209814707437,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 1,
+            "best_para_score": 0.24106740951538086,
+            "best_para_text": "There is a belief that caffeinated drinks, such as tea, may adversely affect hydration. This was investigated in a randomised controlled trial."
+          },
+          {
+            "query_id": "PLAIN-1225",
+            "query": "fructose",
+            "single_rr": 0.5,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.5,
+            "single_top_doc": "MED-918",
+            "paragraph_top_doc": "MED-1669",
+            "paragraph_top_doc_score": 0.4417547782262166,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 12,
+            "best_para_score": 0.47133535146713257,
+            "best_para_text": "For weight loss achievement, an energy-restricted moderate natural fructose diet was superior to a low-fructose diet. Copyright © 2011 Elsevier Inc."
+          },
+          {
+            "query_id": "PLAIN-1262",
+            "query": "Global Burden of Disease Study",
+            "single_rr": 0.5,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.5,
+            "single_top_doc": "MED-983",
+            "paragraph_top_doc": "MED-5293",
+            "paragraph_top_doc_score": 0.43880216280619305,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 4,
+            "best_para_score": 0.4847344160079956,
+            "best_para_text": "We used these estimates, together with estimates of cause-specific deaths and DALYs from the Global Burden of Disease Study 2010, to calculate the burden attributable to each risk factor exposure compared with the theoretical-minimum-risk exposure. We incorporated uncertainty in disease burden, relative risks, and exposures into our estimates of attributable burden."
+          }
+        ],
+        "largest_single_vector_wins": [
+          {
+            "query_id": "PLAIN-227",
+            "query": "Increasing Muscle Strength with Fenugreek",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.0125,
+            "rr_gain": -0.9875,
+            "single_top_doc": "MED-4150",
+            "paragraph_top_doc": "MED-3459",
+            "paragraph_top_doc_score": 0.28216009338696796,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 13,
+            "best_para_score": 0.3216773569583893,
+            "best_para_text": "Results: The WBVT group showed a reduction in DOMS symptoms in the form of less maximal isometric and isokinetic voluntary strength loss, lower creatine kinase levels, and less pressure pain threshold and muscle soreness (P < .05) compared with the control group. However, no effect on thigh circumference was evident (P < .05)."
+          },
+          {
+            "query_id": "PLAIN-2490",
+            "query": "The Actual Benefit of Diet vs. Drugs",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.038461538461538464,
+            "rr_gain": -0.9615384615384616,
+            "single_top_doc": "MED-1490",
+            "paragraph_top_doc": "MED-4347",
+            "paragraph_top_doc_score": 0.24885132908821106,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 6,
+            "best_para_score": 0.3397284746170044,
+            "best_para_text": "RESULTS: The L-diet achieved a greater body weight loss, when compared to the C-diet (-7.8 ± 2.9% vs. -5.3 ± 2.7%; p = 0.024)."
+          },
+          {
+            "query_id": "PLAIN-2670",
+            "query": "Is Caramel Color Carcinogenic?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.05,
+            "rr_gain": -0.95,
+            "single_top_doc": "MED-2994",
+            "paragraph_top_doc": "MED-4659",
+            "paragraph_top_doc_score": 0.25480108459790546,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 1,
+            "best_para_score": 0.29632294178009033,
+            "best_para_text": "They have focused on facial color distribution, homogeneity of pigmentation, or skin quality. We here investigate the role of overall skin color in determining perceptions of health from faces by allowing participants to manipulate the skin portions of color-calibrated Caucasian face photographs along CIELab color axes."
+          },
+          {
+            "query_id": "PLAIN-280",
+            "query": "Mercury Testing Recommended Before Pregnancy",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.06666666666666667,
+            "rr_gain": -0.9333333333333333,
+            "single_top_doc": "MED-4376",
+            "paragraph_top_doc": "MED-4733",
+            "paragraph_top_doc_score": 0.3071105380853017,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 7,
+            "best_para_score": 0.34102684259414673,
+            "best_para_text": "Mercury is transferred into a hair; and this can be than used to monitor the long-term exposure to mercury. The content of mercury in hair depends on the frequency of fish consumption."
+          },
+          {
+            "query_id": "PLAIN-2610",
+            "query": "Treating Asthma With Plants vs. Supplements?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.08333333333333333,
+            "rr_gain": -0.9166666666666666,
+            "single_top_doc": "MED-2452",
+            "paragraph_top_doc": "MED-4366",
+            "paragraph_top_doc_score": 0.2791130145390828,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 1,
+            "best_para_score": 0.3194529712200165,
+            "best_para_text": "BACKGROUND: Many different dietary supplements are being sold in North America. The quality of the evidence supporting their efficacy covers a wide spectrum: Some are based on solid science (such as vitamin D and fish oil), whereas with most supplements there is little or no supporting evidence."
+          },
+          {
+            "query_id": "PLAIN-320",
+            "query": "Breast Cancer and Diet",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.09090909090909091,
+            "rr_gain": -0.9090909090909091,
+            "single_top_doc": "MED-5184",
+            "paragraph_top_doc": "MED-1825",
+            "paragraph_top_doc_score": 0.3436128844817479,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 15,
+            "best_para_score": 0.40308046340942383,
+            "best_para_text": "Flax demonstrates antiproliferative effects in breast tissue of women at risk of breast cancer and may protect against primary breast cancer. Mortality risk may also be reduced among those living with breast cancer."
+          },
+          {
+            "query_id": "PLAIN-2291",
+            "query": "ultra-processed foods",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.14285714285714285,
+            "rr_gain": -0.8571428571428572,
+            "single_top_doc": "MED-2726",
+            "paragraph_top_doc": "MED-4337",
+            "paragraph_top_doc_score": 0.2409776250521342,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 6,
+            "best_para_score": 0.281242311000824,
+            "best_para_text": "TLR stimulants were present mainly in meat products and processed foods, but were minimal or undetectable in fresh fruit and vegetables. The capacity of food extracts to induce TNF-α secretion in monocytes correlated with the content of both TLR2 (r 0·837) and TLR4 stimulants (r 0·748), and was completely abolished by specific inhibition of TLR2 and TLR4."
+          },
+          {
+            "query_id": "PLAIN-3074",
+            "query": "How to Help Prevent Abdominal Aortic Aneurysms",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.14285714285714285,
+            "rr_gain": -0.8571428571428572,
+            "single_top_doc": "MED-4555",
+            "paragraph_top_doc": "MED-1705",
+            "paragraph_top_doc_score": 0.28033193449179333,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 6,
+            "best_para_score": 0.3324524164199829,
+            "best_para_text": "A pathobiological cascade of biochemical events in the presence of CBH that leads to oxidative stress and neurodegeneration appears to involve multiple biofactors including micronutrients, trace metals, lipids, and pro-oxidants, as reviewed in this special issue of BioFactors. Modulation of these biofactors may help prevent or control incipient AD."
+          },
+          {
+            "query_id": "PLAIN-383",
+            "query": "What do you think of Dr. Jenkins' take on paleolithic diets?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.16666666666666666,
+            "rr_gain": -0.8333333333333334,
+            "single_top_doc": "MED-4299",
+            "paragraph_top_doc": "MED-2510",
+            "paragraph_top_doc_score": 0.2731875677903493,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 2,
+            "best_para_score": 0.28583523631095886,
+            "best_para_text": "Here, we report the first comprehensive comparative meta-analysis of DR across studies and species. Overall, DR significantly increased lifespan, but this effect is modulated by several factors."
+          },
+          {
+            "query_id": "PLAIN-2430",
+            "query": "Preventing Brain Loss with B Vitamins?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.16666666666666666,
+            "rr_gain": -0.8333333333333334,
+            "single_top_doc": "MED-994",
+            "paragraph_top_doc": "MED-4872",
+            "paragraph_top_doc_score": 0.329594224691391,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 6,
+            "best_para_score": 0.35591980814933777,
+            "best_para_text": "Vitamins have documented adverse effects and toxicities, and most have documented interactions with drugs. While some vitamins (biotin, pantothenic acid, riboflavin, thiamine, vitamin B(12), vitamin K) have minor and reversible adverse effects, others, such as fat-soluble vitamins (A, E, D), can cause serious adverse events."
+          }
+        ]
+      },
+      "grouped_analysis": {
+        "by_relevant_doc_length": {
+          "mid": {
+            "query_count": 108.0,
+            "single_mrr": 0.4836471821029511,
+            "paragraph_mrr": 0.45241255019041776,
+            "mrr_delta": -0.03123463191253334
+          },
+          "low": {
+            "query_count": 108.0,
+            "single_mrr": 0.5417825207255894,
+            "paragraph_mrr": 0.46193488578130415,
+            "mrr_delta": -0.07984763494428526
+          },
+          "high": {
+            "query_count": 107.0,
+            "single_mrr": 0.4706149143873867,
+            "paragraph_mrr": 0.41611727314548336,
+            "mrr_delta": -0.054497641241903316
+          }
+        },
+        "by_relevant_doc_segment_count": {
+          "low": {
+            "query_count": 125.0,
+            "single_mrr": 0.5670098661244825,
+            "paragraph_mrr": 0.4976734052622819,
+            "mrr_delta": -0.06933646086220058
+          },
+          "mid": {
+            "query_count": 108.0,
+            "single_mrr": 0.4760989302169618,
+            "paragraph_mrr": 0.4034656175130585,
+            "mrr_delta": -0.07263331270390333
+          },
+          "high": {
+            "query_count": 90.0,
+            "single_mrr": 0.4311920668437837,
+            "paragraph_mrr": 0.41656232180352354,
+            "mrr_delta": -0.014629745040260156
+          }
+        }
+      },
+      "runtime": {
+        "stage1_seconds": 0.8167250156402588,
+        "paragraph_rerank_seconds": 344.3860909938812,
+        "avg_segments_per_candidate": 9.885015479876161,
+        "avg_scored_segments_per_query": 988.501547987616
+      }
+    },
+    "scifact": {
+      "single_vector": {
+        "mrr@10": 0.5756494708994708,
+        "recall@10": 0.7598333333333332,
+        "precision@10": 0.08300000000000023,
+        "hit@10": 0.7766666666666666,
+        "ndcg@10": 0.6148515404939806
+      },
+      "paragraph_level": {
+        "mrr@10": 0.40145370370370376,
+        "recall@10": 0.5856666666666667,
+        "precision@10": 0.06366666666666668,
+        "hit@10": 0.6033333333333334,
+        "ndcg@10": 0.43989202950766754
+      },
+      "query_level_comparison": {
+        "counts": {
+          "paragraph_better": 31,
+          "single_better": 143,
+          "tie": 126
+        },
+        "best_paragraph_wins": [
+          {
+            "query_id": "971",
+            "query": "Primary cervical cancer screening with HPV detection has higher longitudinal sensitivity than conventional cytology to detect cervical intraepithelial neoplasia grade 2.",
+            "single_rr": 0.25,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.75,
+            "single_top_doc": "829646",
+            "paragraph_top_doc": "27873158",
+            "paragraph_top_doc_score": 0.42549078663190204,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 1,
+            "best_para_score": 0.489216685295105,
+            "best_para_text": "BACKGROUND Human papillomavirus (HPV) testing is known to be more sensitive, but less specific than cytology for detecting cervical intraepithelial neoplasia (CIN). We assessed the efficacy of cervical-cancer screening policies that are based on HPV testing."
+          },
+          {
+            "query_id": "1041",
+            "query": "Replacement of histone H2A with H2A.Z slows gene activation in yeasts by stabilizing +1 nucleosomes.",
+            "single_rr": 0.25,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.75,
+            "single_top_doc": "9451052",
+            "paragraph_top_doc": "25254425",
+            "paragraph_top_doc_score": 0.3934875826040904,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 3,
+            "best_para_score": 0.4361981749534607,
+            "best_para_text": "We report here that H3.3 nucleosomes isolated from vertebrates, regardless of whether they are partnered with H2A or H2A.Z, are unusually sensitive to salt-dependent disruption, losing H2A/H2B or H2A.Z/H2B dimers. Immunoprecipitation studies of nucleosome core particles (NCPs) show that NCPs that contain both H3.3 and H2A.Z are even less stable than NCPs containing H3.3 and H2A."
+          },
+          {
+            "query_id": "128",
+            "query": "Arterioles have a larger lumen diameter than venules.",
+            "single_rr": 0.3333333333333333,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.6666666666666667,
+            "single_top_doc": "23513718",
+            "paragraph_top_doc": "8290953",
+            "paragraph_top_doc_score": 0.22473364075024924,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 7,
+            "best_para_score": 0.24787476658821106,
+            "best_para_text": "Fourteen and 30 days after surgery, hearts were exposed and photographed, and tissue samples were prepared for histology and cytochemistry. Fourteen and 30 days after surgery, the damaged myocardium receiving viable 3DFC exhibited a significantly greater angiogenic response (including arterioles, venules, and capillaries) than nonviable and untreated control groups."
+          },
+          {
+            "query_id": "249",
+            "query": "Chenodeosycholic acid treatment reduces whole-body energy expenditure.",
+            "single_rr": 0.3333333333333333,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.6666666666666667,
+            "single_top_doc": "25050364",
+            "paragraph_top_doc": "1568684",
+            "paragraph_top_doc_score": 0.3597578207651774,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 4,
+            "best_para_score": 0.5277246832847595,
+            "best_para_text": "Treatment of 12 healthy female subjects with CDCA for 2 days resulted in increased BAT activity. Whole-body energy expenditure was also increased upon CDCA treatment."
+          },
+          {
+            "query_id": "415",
+            "query": "Female carriers of the Apolipoprotein E4 (APOE4) allele have increased risk for dementia.",
+            "single_rr": 0.3333333333333333,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.6666666666666667,
+            "single_top_doc": "4709641",
+            "paragraph_top_doc": "6309659",
+            "paragraph_top_doc_score": 0.3276364703973134,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 13,
+            "best_para_score": 0.36405056715011597,
+            "best_para_text": "Risk of dementia associated with a longer reproductive period was most pronounced in APOE epsilon4 carriers (adjusted RR for >39 reproductive years compared with <34 reproductive years, 4.20 [95% CI, 1.97-8.92] for dementia and 3.42 [95% CI, 1.51-7.75] for AD), whereas in noncarriers, no clear association with dementia or AD was observed. CONCLUSION Our findings do not support the hypothesis that a longer reproductive period reduces risk of dementia in women who have natural menopause."
+          },
+          {
+            "query_id": "1337",
+            "query": "Ubiquitin ligase UBC13 generates a K63-linked polyubiquitin moiety at PCNA K164.",
+            "single_rr": 0.3333333333333333,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.6666666666666667,
+            "single_top_doc": "1635872",
+            "paragraph_top_doc": "20231138",
+            "paragraph_top_doc_score": 0.2436562329530716,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 4,
+            "best_para_score": 0.28062644600868225,
+            "best_para_text": "Here we show that damage-induced fork reversal in mammalian cells requires PCNA ubiquitination, UBC13, and K63-linked polyubiquitin chains, previously involved in error-free damage tolerance. Fork reversal in vivo also requires ZRANB3 translocase activity and its interaction with polyubiquitinated PCNA, pinpointing ZRANB3 as a key effector of error-free DNA damage tolerance."
+          },
+          {
+            "query_id": "1362",
+            "query": "Venules have a larger lumen diameter than arterioles.",
+            "single_rr": 0.3333333333333333,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.6666666666666667,
+            "single_top_doc": "23513718",
+            "paragraph_top_doc": "8290953",
+            "paragraph_top_doc_score": 0.22473364075024924,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 7,
+            "best_para_score": 0.24787476658821106,
+            "best_para_text": "Fourteen and 30 days after surgery, hearts were exposed and photographed, and tissue samples were prepared for histology and cytochemistry. Fourteen and 30 days after surgery, the damaged myocardium receiving viable 3DFC exhibited a significantly greater angiogenic response (including arterioles, venules, and capillaries) than nonviable and untreated control groups."
+          },
+          {
+            "query_id": "298",
+            "query": "Cytochrome c is released from the mitochondrial intermembrane space to cytosol during apoptosis.",
+            "single_rr": 0.5,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.5,
+            "single_top_doc": "23403754",
+            "paragraph_top_doc": "39381118",
+            "paragraph_top_doc_score": 0.3528991639614105,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.5158623456954956,
+            "best_para_text": "At the gates of death. Apoptosis that proceeds via the mitochondrial pathway involves mitochondrial outer membrane permeabilization (MOMP), responsible for the release of cytochrome c and other proteins of the mitochondrial intermembrane space."
+          },
+          {
+            "query_id": "303",
+            "query": "DMRT1 is a sex-determining gene that is epigenetically regulated by the MHM region.",
+            "single_rr": 0.5,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.5,
+            "single_top_doc": "4085204",
+            "paragraph_top_doc": "4388470",
+            "paragraph_top_doc_score": 0.29832706848780316,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.3639346957206726,
+            "best_para_text": "Somatic sex identity is cell-autonomous in the chicken In the mammalian model of sex determination, embryos are considered to be sexually indifferent until the transient action of a sex-determining gene initiates gonadal differentiation. Although this model is thought to apply to all vertebrates, this has yet to be established."
+          },
+          {
+            "query_id": "507",
+            "query": "Helminths interfere with immune system control of macrophages activated by IL-4 favor Mycobacterium tuberculosis replication.",
+            "single_rr": 0.5,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.5,
+            "single_top_doc": "35079452",
+            "paragraph_top_doc": "30774694",
+            "paragraph_top_doc_score": 0.2754663825035095,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.3104471266269684,
+            "best_para_text": "T helper 2 cytokines inhibit autophagic control of intracellular Mycobacterium tuberculosis. Autophagy is a recently recognized immune effector mechanism against intracellular pathogens."
+          }
+        ],
+        "largest_single_vector_wins": [
+          {
+            "query_id": "839",
+            "query": "Nanoparticles can be targeted against specific cell types by incorporating aptamers into lipid nanoparticles.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.012987012987012988,
+            "rr_gain": -0.987012987012987,
+            "single_top_doc": "1469751",
+            "paragraph_top_doc": "169264",
+            "paragraph_top_doc_score": 0.25805715719858807,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 8,
+            "best_para_score": 0.29018154740333557,
+            "best_para_text": "Higher numbers of proteins were adsorbed onto the 20 nm sized SiO2 nanoparticles than onto the 100 nm sized nanoparticles regardless of charge. When proteins were compared between the two charges, higher numbers of proteins were found for arginine-coated positively charged SiO2 nanoparticles than for the negatively charged nanoparticles."
+          },
+          {
+            "query_id": "51",
+            "query": "ALDH1 expression is associated with better breast cancer outcomes.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.013513513513513514,
+            "rr_gain": -0.9864864864864865,
+            "single_top_doc": "45638119",
+            "paragraph_top_doc": "11880289",
+            "paragraph_top_doc_score": 0.36053646604220074,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 7,
+            "best_para_score": 0.4259299337863922,
+            "best_para_text": "Analyses included all women randomly assigned who could be traced with the National Health Service Central Register and who had not died or emigrated before entry. The primary outcome measures were mortality from breast cancer (defined as deaths with breast cancer coded as the underlying cause of death) and breast cancer incidence, including in-situ, invasive, and total incidence."
+          },
+          {
+            "query_id": "53",
+            "query": "ALDH1 expression is associated with poorer prognosis in breast cancer.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.014705882352941176,
+            "rr_gain": -0.9852941176470589,
+            "single_top_doc": "45638119",
+            "paragraph_top_doc": "27240667",
+            "paragraph_top_doc_score": 0.33411937952041626,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 0,
+            "best_para_score": 0.38926318287849426,
+            "best_para_text": "Breast cancer mortality trends in the United States according to estrogen receptor status and age at diagnosis. PURPOSE Since 1990, overall breast cancer mortality rates in the United States decreased 24%."
+          },
+          {
+            "query_id": "1282",
+            "query": "Therapeutic use of the drug Dapsone to treat pyoderma gangrenous is based on anecdotal evidence.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.018518518518518517,
+            "rr_gain": -0.9814814814814815,
+            "single_top_doc": "23649163",
+            "paragraph_top_doc": "21884059",
+            "paragraph_top_doc_score": 0.21321438501278558,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 2,
+            "best_para_score": 0.2780366539955139,
+            "best_para_text": "Despite considerable advances in our understanding of the pathophysiology, diagnosis and predisposing factors for both acute and chronic forms of the disease, a standardised therapeutic strategy is still lacking. There is good evidence for initial treatment of both acute and chronic forms of the disease with corticosteroid therapy."
+          },
+          {
+            "query_id": "99",
+            "query": "Alizarin forms hydrogen bonds with residues involved in PGAM1 substrate binding.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.023809523809523808,
+            "rr_gain": -0.9761904761904762,
+            "single_top_doc": "18810195",
+            "paragraph_top_doc": "20279166",
+            "paragraph_top_doc_score": 0.294726421435674,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 3,
+            "best_para_score": 0.4075313210487366,
+            "best_para_text": "Relying on the distinct Raman spectral features of the carbon-hydrogen bonds in DNA, the distribution of DNA is retrieved from the strong background of proteins and lipids by linear decomposition of SRS images at three optimally selected Raman shifts. Based on changes on DNA condensation in the nucleus, we were able to capture chromosome dynamics during cell division both in vitro and in vivo."
+          },
+          {
+            "query_id": "1024",
+            "query": "Recurrent mutations occur frequently within CTCF anchor sites adjacent to oncogenes.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.02564102564102564,
+            "rr_gain": -0.9743589743589743,
+            "single_top_doc": "5373138",
+            "paragraph_top_doc": "24995939",
+            "paragraph_top_doc_score": 0.19371927281220755,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 4,
+            "best_para_score": 0.22336897253990173,
+            "best_para_text": "Expression in vivo of CTCF mutants lacking the C-terminal domain, or with mutations at sites within it required for SA2 binding, disrupts the normal expression profile of the imprinted genes IGF2-H19 and also results in a loss of insulation activity. Taken together, our results demonstrate that specific sites on the C terminus of CTCF are essential for cohesin binding and insulator function."
+          },
+          {
+            "query_id": "837",
+            "query": "NR5A2 is important in development of endometrial tissues.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.02631578947368421,
+            "rr_gain": -0.9736842105263158,
+            "single_top_doc": "15928989",
+            "paragraph_top_doc": "17631671",
+            "paragraph_top_doc_score": 0.2703975935777028,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 4,
+            "best_para_score": 0.37009748816490173,
+            "best_para_text": "They are important not only for the development of the nervous system but also for its functions and, in turn, for neural disorders. In this review, we discuss the roles of cadherins and related molecules in neural development and function in the vertebrate brain."
+          },
+          {
+            "query_id": "960",
+            "query": "Polymeal nutrition reduces cardiovascular mortality.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.02857142857142857,
+            "rr_gain": -0.9714285714285714,
+            "single_top_doc": "8780599",
+            "paragraph_top_doc": "6525844",
+            "paragraph_top_doc_score": 0.3260912150144577,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 11,
+            "best_para_score": 0.3927064538002014,
+            "best_para_text": "After adjustment for all the confounding factors, an OR for PWV >12. 0 versus <9.4 m/s was 5.4 (95% CI, 2.4 to 11.9) for all-cause mortality and 5.9 (95% CI, 2.3 to 15.5) for cardiovascular mortality."
+          },
+          {
+            "query_id": "208",
+            "query": "CHEK2 is not associated with breast cancer.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.029411764705882353,
+            "rr_gain": -0.9705882352941176,
+            "single_top_doc": "13519661",
+            "paragraph_top_doc": "13007205",
+            "paragraph_top_doc_score": 0.351595401763916,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 0,
+            "best_para_score": 0.4068968892097473,
+            "best_para_text": "Intrinsic genetic characteristics determine tumor-modifying capacity of fibroblasts: matrix metalloproteinase-3 5A/5A genotype enhances breast cancer cell invasion Stromal fibroblasts can contribute to tumor invasion through the release of matrix metalloproteinases (MMPs). Population studies have suggested that single nucleotide polymorphisms (SNPs) in MMP genes influence levels of expression and may be associated with breast cancer risk and with disease progression."
+          },
+          {
+            "query_id": "1202",
+            "query": "The center of the granuloma in an immune cell induces a pro-inflammatory immune response.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.029411764705882353,
+            "rr_gain": -0.9705882352941176,
+            "single_top_doc": "3475317",
+            "paragraph_top_doc": "23388442",
+            "paragraph_top_doc_score": 0.2145156761010488,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 7,
+            "best_para_score": 0.29119640588760376,
+            "best_para_text": "These reports critically evaluate the evidence from human clinical trials of omega-3 fatty acids and rheumatoid arthritis, asthma, and a few other immune-mediated diseases. Third, the data from human clinical trials investigating the impact of various bioactive fatty acids on ex vivo and in vivo immune response are reviewed."
+          }
+        ]
+      },
+      "grouped_analysis": {
+        "by_relevant_doc_length": {
+          "low": {
+            "query_count": 102.0,
+            "single_mrr": 0.5105436659712935,
+            "paragraph_mrr": 0.3258590403805034,
+            "mrr_delta": -0.18468462559079013
+          },
+          "high": {
+            "query_count": 99.0,
+            "single_mrr": 0.566607649927946,
+            "paragraph_mrr": 0.48694499810267033,
+            "mrr_delta": -0.07966265182527565
+          },
+          "mid": {
+            "query_count": 99.0,
+            "single_mrr": 0.6689358349465553,
+            "paragraph_mrr": 0.4223328771680449,
+            "mrr_delta": -0.24660295777851038
+          }
+        },
+        "by_relevant_doc_segment_count": {
+          "low": {
+            "query_count": 108.0,
+            "single_mrr": 0.6152098624606599,
+            "paragraph_mrr": 0.3620938037346971,
+            "mrr_delta": -0.2531160587259628
+          },
+          "mid": {
+            "query_count": 95.0,
+            "single_mrr": 0.5393147371622279,
+            "paragraph_mrr": 0.36987519702328303,
+            "mrr_delta": -0.16943954013894486
+          },
+          "high": {
+            "query_count": 97.0,
+            "single_mrr": 0.5847081830462337,
+            "paragraph_mrr": 0.5052768788665254,
+            "mrr_delta": -0.07943130417970834
+          }
+        }
+      },
+      "runtime": {
+        "stage1_seconds": 0.8903889656066895,
+        "paragraph_rerank_seconds": 420.3123860359192,
+        "avg_segments_per_candidate": 8.330033333333333,
+        "avg_scored_segments_per_query": 833.0033333333333
+      }
+    },
+    "fiqa": {
+      "single_vector": {
+        "mrr@10": 0.15865299823633153,
+        "recall@10": 0.17389735179087024,
+        "precision@10": 0.04120370370370378,
+        "hit@10": 0.30092592592592593,
+        "ndcg@10": 0.13068142295313034
+      },
+      "paragraph_level": {
+        "mrr@10": 0.13012443660591808,
+        "recall@10": 0.15193220274238792,
+        "precision@10": 0.03287037037037039,
+        "hit@10": 0.26697530864197533,
+        "ndcg@10": 0.10520771954274355
+      },
+      "query_level_comparison": {
+        "counts": {
+          "paragraph_better": 160,
+          "single_better": 214,
+          "tie": 274
+        },
+        "best_paragraph_wins": [
+          {
+            "query_id": "7592",
+            "query": "few question about debit credit and liabilities",
+            "single_rr": 0.024390243902439025,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.975609756097561,
+            "single_top_doc": "102002",
+            "paragraph_top_doc": "273947",
+            "paragraph_top_doc_score": 0.4775718152523041,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 41,
+            "best_para_score": 0.5554922819137573,
+            "best_para_text": "2: Every transaction must update two or more accounts. Each update is either a \"\"debit\"\" or a \"\"credit\"\"."
+          },
+          {
+            "query_id": "6985",
+            "query": "Bed and Breakfast, Same Day Capital Gains UK",
+            "single_rr": 0.07692307692307693,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.9230769230769231,
+            "single_top_doc": "548705",
+            "paragraph_top_doc": "456436",
+            "paragraph_top_doc_score": 0.3685435652732849,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 1,
+            "best_para_score": 0.4191763401031494,
+            "best_para_text": "It says that sales on any day are matched firstly with purchases made on the same day for the purposes of ascertaining any gain/loss. Hence the phrase 'bed-and-breakfast' ('b&b') when you wish to crystalise a gain (that is within the exempt amount) and re-establish a purchase price at a higher level."
+          },
+          {
+            "query_id": "9385",
+            "query": "Meaning of reinvestment",
+            "single_rr": 0.09090909090909091,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.9090909090909091,
+            "single_top_doc": "400571",
+            "paragraph_top_doc": "403755",
+            "paragraph_top_doc_score": 0.3354230225086212,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 13,
+            "best_para_score": 0.41024425625801086,
+            "best_para_text": "4) Does reinvestment only apply to interest or dividends, but not to capital gain? Reinvestment only applies to dividends in the case of stocks."
+          },
+          {
+            "query_id": "2154",
+            "query": "What tax software automatically determines the best filing status, etc?",
+            "single_rr": 0.09090909090909091,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.9090909090909091,
+            "single_top_doc": "551187",
+            "paragraph_top_doc": "476632",
+            "paragraph_top_doc_score": 0.34448980043331784,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 13,
+            "best_para_score": 0.5483741164207458,
+            "best_para_text": "You also ask about filing status. Think on this for a minute."
+          },
+          {
+            "query_id": "6131",
+            "query": "Is it ever a good idea to close credit cards?",
+            "single_rr": 0.1111111111111111,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.8888888888888888,
+            "single_top_doc": "257916",
+            "paragraph_top_doc": "326094",
+            "paragraph_top_doc_score": 0.44170911113421124,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.5033837556838989,
+            "best_para_text": "\"Yes, it can be a good idea to close unused credit cards. I am going to give some reasons why it can be a good idea to close unused accounts, and then I will talk about why it is NOT necessarily a bad idea."
+          },
+          {
+            "query_id": "4047",
+            "query": "Does doing your “research”/“homework” on stocks make any sense?",
+            "single_rr": 0.16666666666666666,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.8333333333333334,
+            "single_top_doc": "30072",
+            "paragraph_top_doc": "417840",
+            "paragraph_top_doc_score": 0.29015494386355084,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 8,
+            "best_para_score": 0.4048358201980591,
+            "best_para_text": "So, is homework completely for naught? No!\""
+          },
+          {
+            "query_id": "4845",
+            "query": "What is the difference between fund and portfolio?",
+            "single_rr": 0.16666666666666666,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.8333333333333334,
+            "single_top_doc": "118532",
+            "paragraph_top_doc": "40424",
+            "paragraph_top_doc_score": 0.5411433080832163,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 10,
+            "best_para_score": 0.5990482568740845,
+            "best_para_text": "Another way of looking at it, is that a Fund is a special type of Portfolio. That is, a Fund is a portfolio, that someone will sell to someone else (see Daniel's answer below)."
+          },
+          {
+            "query_id": "6005",
+            "query": "Why might it be advisable to keep student debt vs. paying it off quickly?",
+            "single_rr": 0.25,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.75,
+            "single_top_doc": "91825",
+            "paragraph_top_doc": "507544",
+            "paragraph_top_doc_score": 0.411503146092097,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 4,
+            "best_para_score": 0.4912155568599701,
+            "best_para_text": "The other question is whether having student debt is better than having other debt. You need to look at the terms of your student debt."
+          },
+          {
+            "query_id": "2348",
+            "query": "Why can't you just have someone invest for you and split the profits (and losses) with him?",
+            "single_rr": 0.25,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.75,
+            "single_top_doc": "128435",
+            "paragraph_top_doc": "306430",
+            "paragraph_top_doc_score": 0.39835846424102783,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 1,
+            "best_para_score": 0.4806396961212158,
+            "best_para_text": "I will invest it as I see fit. A year later I will return the capital to you, plus half of any profits or losses."
+          },
+          {
+            "query_id": "4499",
+            "query": "Is investing exlusively in a small-cap index fund a wise investment?",
+            "single_rr": 0.25,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.75,
+            "single_top_doc": "31779",
+            "paragraph_top_doc": "513818",
+            "paragraph_top_doc_score": 0.42357394099235535,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 5,
+            "best_para_score": 0.4772924482822418,
+            "best_para_text": "Similarly, the market will not reward you for owning a small-cap index fund when you can purchase a globally diversified / capitalization diversified index fund at no additional cost. This article provides a more detailed description."
+          }
+        ],
+        "largest_single_vector_wins": [
+          {
+            "query_id": "8832",
+            "query": "Is it possible to buy commodity ETFs (e.g. silver) through Questrade?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.011627906976744186,
+            "rr_gain": -0.9883720930232558,
+            "single_top_doc": "94689",
+            "paragraph_top_doc": "363899",
+            "paragraph_top_doc_score": 0.32610220710436505,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 9,
+            "best_para_score": 0.3525186777114868,
+            "best_para_text": "Demand due to practical uses should keep up with inflation, since in principle the prices on whatever products you make from the commodity would keep up with inflation. But even here there's a danger, because it may be that over time some popular uses for a given commodity become obsolete."
+          },
+          {
+            "query_id": "1815",
+            "query": "Rules for SEP contributions in an LLC?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.02,
+            "rr_gain": -0.98,
+            "single_top_doc": "446928",
+            "paragraph_top_doc": "104934",
+            "paragraph_top_doc_score": 0.37345898151397705,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 7,
+            "best_para_score": 0.4076438546180725,
+            "best_para_text": "In other words, the solo 401(k) dominates the SEP IRA in terms of contributions and shares a limit on the profit-sharing contribution. If you have a solo 401(k), there is never a reason to have a SEP for the same company."
+          },
+          {
+            "query_id": "2749",
+            "query": "Is it possible to create a self-managed superannuation fund to act as a mortage offset? (Australia)",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.02564102564102564,
+            "rr_gain": -0.9743589743589743,
+            "single_top_doc": "587192",
+            "paragraph_top_doc": "523058",
+            "paragraph_top_doc_score": 0.2741083006064097,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 2,
+            "best_para_score": 0.3211795389652252,
+            "best_para_text": "This depleted the offset savings in line with the mortgage debt, and the interest on the two balanced out almost to zero. This was self-sustaining and meant that I kept the same margin owing over time (i.e."
+          },
+          {
+            "query_id": "3091",
+            "query": "Am I considered in debt if I pay a mortgage?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.02702702702702703,
+            "rr_gain": -0.972972972972973,
+            "single_top_doc": "534099",
+            "paragraph_top_doc": "66397",
+            "paragraph_top_doc_score": 0.4290056725343068,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 3,
+            "best_para_score": 0.4613194465637207,
+            "best_para_text": "--- **Edit ::** I was curious about this, so I started doing a little reading-up on businesses not accepting cash. It turns out that it **is legal** to refuse cash, but only if there is no debt to pay."
+          },
+          {
+            "query_id": "1670",
+            "query": "Investing in hemp producers in advance of possible legalization in Canada?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.03225806451612903,
+            "rr_gain": -0.967741935483871,
+            "single_top_doc": "493792",
+            "paragraph_top_doc": "25513",
+            "paragraph_top_doc_score": 0.2612014710903168,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 0,
+            "best_para_score": 0.2612014710903168,
+            "best_para_text": "If the person gifting the property owed any debt to Canada Revenue Agency on the date of gift, you may getting a nice letter from Canada Revenue Agency advising you to settle the donor's tax liability with the property gifted."
+          },
+          {
+            "query_id": "7911",
+            "query": "What is the difference between a 'trader' and a 'stockbroker'?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.047619047619047616,
+            "rr_gain": -0.9523809523809523,
+            "single_top_doc": "57711",
+            "paragraph_top_doc": "406872",
+            "paragraph_top_doc_score": 0.3694380223751068,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 3,
+            "best_para_score": 0.5163812041282654,
+            "best_para_text": "The stockbroker helps you buy and sell stock. The stockbroker has a connection to one or more stock exchanges (e.g."
+          },
+          {
+            "query_id": "4116",
+            "query": "Would the effects of an anticipated default by a nation be mostly symbolic?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.047619047619047616,
+            "rr_gain": -0.9523809523809523,
+            "single_top_doc": "109149",
+            "paragraph_top_doc": "103511",
+            "paragraph_top_doc_score": 0.2647726833820343,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 0,
+            "best_para_score": 0.2647726833820343,
+            "best_para_text": "Pay off the credit card, tear it up and never get another one. The rest of the money I would add to your emergency fund/save for the anticipated home repairs."
+          },
+          {
+            "query_id": "4700",
+            "query": "Better to get loan from finance company or bank considering the drop of credit score?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.06666666666666667,
+            "rr_gain": -0.9333333333333333,
+            "single_top_doc": "345137",
+            "paragraph_top_doc": "279897",
+            "paragraph_top_doc_score": 0.3269037107626597,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 5,
+            "best_para_score": 0.35241612792015076,
+            "best_para_text": "But the dealer or the finance company holds that asset as collateral that they can seize to repay the loan. So the finance company gets paid off and the dealer keeps the profit he made selling the car."
+          },
+          {
+            "query_id": "3115",
+            "query": "How can I live outside of the rat race of American life with 300k?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.07142857142857142,
+            "rr_gain": -0.9285714285714286,
+            "single_top_doc": "183869",
+            "paragraph_top_doc": "599558",
+            "paragraph_top_doc_score": 0.37470099329948425,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 3,
+            "best_para_score": 0.579182505607605,
+            "best_para_text": "You're first place to live outside of your parents' place is probably gonna suck. That's life."
+          },
+          {
+            "query_id": "3453",
+            "query": "How does spot-futures arbitrage work in the gold market?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.08333333333333333,
+            "rr_gain": -0.9166666666666666,
+            "single_top_doc": "418626",
+            "paragraph_top_doc": "46642",
+            "paragraph_top_doc_score": 0.30132076144218445,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 3,
+            "best_para_score": 0.3169456422328949,
+            "best_para_text": "The price of an October gold futures call with a strike of $1310 is currently $22.70. Gold spot is currently $1308.20."
+          }
+        ]
+      },
+      "grouped_analysis": {
+        "by_relevant_doc_length": {
+          "low": {
+            "query_count": 217.0,
+            "single_mrr": 0.19837337334378502,
+            "paragraph_mrr": 0.1422520439193472,
+            "mrr_delta": -0.056121329424437816
+          },
+          "mid": {
+            "query_count": 216.0,
+            "single_mrr": 0.14992829919563666,
+            "paragraph_mrr": 0.10961443306112308,
+            "mrr_delta": -0.040313866134513585
+          },
+          "high": {
+            "query_count": 215.0,
+            "single_mrr": 0.16791491207619624,
+            "paragraph_mrr": 0.17790692746596926,
+            "mrr_delta": 0.009992015389773012
+          }
+        },
+        "by_relevant_doc_segment_count": {
+          "low": {
+            "query_count": 249.0,
+            "single_mrr": 0.20722214715234713,
+            "paragraph_mrr": 0.13899691376846418,
+            "mrr_delta": -0.06822523338388295
+          },
+          "mid": {
+            "query_count": 193.0,
+            "single_mrr": 0.14371847538078836,
+            "paragraph_mrr": 0.10586179511455639,
+            "mrr_delta": -0.03785668026623197
+          },
+          "high": {
+            "query_count": 206.0,
+            "single_mrr": 0.1562973803340508,
+            "paragraph_mrr": 0.18327108005547255,
+            "mrr_delta": 0.026973699721421746
+          }
+        }
+      },
+      "runtime": {
+        "stage1_seconds": 16.442617654800415,
+        "paragraph_rerank_seconds": 963.1024532318115,
+        "avg_segments_per_candidate": 5.949614197530864,
+        "avg_scored_segments_per_query": 594.9614197530864
+      }
+    }
+  }
+}

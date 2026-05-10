@@ -1,0 +1,28 @@
+This package adds a principled paragraph-favoring transfer setup. The goal is not to fake a paragraph win, but to test the most plausible reasons why paragraph-level retrieval may have underperformed in the earlier BEIR run.
+
+Main changes:
+1. Stronger encoder option:
+   - Added a sentence-transformer configuration instead of relying only on TF-IDF projection.
+   - Rationale: paragraph units are shorter and sparser, so they need a stronger semantic encoder.
+
+2. Larger segmentation units:
+   - Added settings such as natural paragraphs, 3-sentence windows, 128-token chunks, and 256-token chunks.
+   - Rationale: 2-sentence windows may be too short and may break useful local evidence.
+
+3. Aggregation settings that preserve strong local evidence:
+   - Added max, weighted_topk, and softmax-weighted settings.
+   - Rationale: top-k mean can dilute one very strong paragraph with weaker segments.
+
+4. Larger candidate pools:
+   - Added candidate_pool options 100, 300, and 500.
+   - Rationale: paragraph-level reranking often needs more room to recover relevant documents.
+
+Files added:
+- configs/beir_transfer_paragraph_hypothesis.json
+- run_beir_paragraph_hypothesis.py
+- run_beir_paragraph_sweep.py
+
+Suggested use:
+- First run the single principled hypothesis config.
+- Then run the sweep and report the best paragraph-level setting honestly.
+- In the paper, describe this as hypothesis-driven tuning, not as forcing a desired result.

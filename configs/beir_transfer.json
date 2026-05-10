@@ -1,0 +1,37 @@
+{
+  "data": {
+    "beir_root": "data/beir",
+    "beir_datasets": ["nfcorpus", "scifact", "fiqa"]
+  },
+  "encoder": {
+    "name": "tfidf_projection",
+    "params": {
+      "max_features": 80000,
+      "projected_dim": 192,
+      "ngram_range": [1, 2],
+      "min_df": 2,
+      "sublinear_tf": true,
+      "stop_words": "english"
+    }
+  },
+  "experiment": {
+    "candidate_pool": 100,
+    "fit_text_cap": 15000,
+    "metric_ks": [10],
+    "stage1_max_features": 100000
+  },
+  "selected_setting": {
+    "segmentation": {
+      "name": "sent2_stride1",
+      "mode": "sentence_window",
+      "window_size": 2,
+      "stride": 1,
+      "min_words": 5
+    },
+    "aggregation": {
+      "name": "topk_mean_k3",
+      "mode": "topk_mean",
+      "top_k": 3
+    }
+  }
+}

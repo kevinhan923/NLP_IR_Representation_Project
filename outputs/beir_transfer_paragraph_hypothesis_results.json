@@ -1,0 +1,1107 @@
+{
+  "config": {
+    "data": {
+      "beir_root": "data/beir",
+      "beir_datasets": [
+        "nfcorpus",
+        "scifact",
+        "fiqa"
+      ]
+    },
+    "encoder": {
+      "name": "tfidf_projection",
+      "params": {
+        "max_features": 120000,
+        "projected_dim": 256,
+        "ngram_range": [
+          1,
+          2
+        ],
+        "min_df": 2,
+        "sublinear_tf": true,
+        "stop_words": "english"
+      }
+    },
+    "experiment": {
+      "candidate_pool": 500,
+      "fit_text_cap": 0,
+      "metric_ks": [
+        10
+      ],
+      "stage1_max_features": 100000
+    },
+    "selected_setting": {
+      "segmentation": {
+        "name": "tok128",
+        "mode": "token_chunk",
+        "token_size": 128,
+        "min_words": 12
+      },
+      "aggregation": {
+        "name": "max",
+        "mode": "max"
+      }
+    }
+  },
+  "results": {
+    "nfcorpus": {
+      "single_vector": {
+        "mrr@10": 0.49323799695316733,
+        "recall@10": 0.14082271229978502,
+        "precision@10": 0.21021671826625402,
+        "hit@10": 0.653250773993808,
+        "ndcg@10": 0.2954246090479448
+      },
+      "paragraph_level": {
+        "mrr@10": 0.4063528920340065,
+        "recall@10": 0.10502728009011336,
+        "precision@10": 0.15758513931888568,
+        "hit@10": 0.5634674922600619,
+        "ndcg@10": 0.22804420911979809
+      },
+      "query_level_comparison": {
+        "counts": {
+          "paragraph_better": 50,
+          "single_better": 112,
+          "tie": 161
+        },
+        "best_paragraph_wins": [
+          {
+            "query_id": "PLAIN-2940",
+            "query": "Dietary Treatment of Crohn's Disease",
+            "single_rr": 0.03225806451612903,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.967741935483871,
+            "single_top_doc": "MED-1579",
+            "paragraph_top_doc": "MED-4629",
+            "paragraph_top_doc_score": 0.3353186249732971,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 2,
+            "best_para_score": 0.3353186249732971,
+            "best_para_text": "improvement, but it may have been influenced by the patients' beliefs in ordinary and 'alternative' forms of treatment; and thirdly, that dietary treatment decreased psychological distress."
+          },
+          {
+            "query_id": "PLAIN-3201",
+            "query": "Acne & Cancer Connection",
+            "single_rr": 0.14285714285714285,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.8571428571428572,
+            "single_top_doc": "MED-5107",
+            "paragraph_top_doc": "MED-5106",
+            "paragraph_top_doc_score": 0.228135883808136,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.228135883808136,
+            "best_para_text": "Milk consumption and acne in teenaged boys Objective We sought to examine the association between dietary dairy intake and teenaged acne among boys. Methods This was a prospective cohort study. We studied 4273 boys, members of a prospective cohort study of youths and of lifestyle factors, who reported dietary intake on up to 3 food frequency questionnaires from 1996 to 1998 and teenaged acne in 1999. We computed multivariate prevalence ratios and 95% confidence intervals for acne. Results After adjusting for age at baseline, height, and energy intake, the multivariate prevalence ratios (95% confidence interval; P value for test of trend) for acne comparing highest (>2 servings/d) with lowest (<1/wk) intake categories in 1996 were 1.16 (1.01, 1.34; 0.77) for total milk, 1.10 (0.94, 1.28; 0.83) for whole/2%"
+          },
+          {
+            "query_id": "PLAIN-371",
+            "query": "Any update on the scary in vitro avocado data?",
+            "single_rr": 0.2,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.8,
+            "single_top_doc": "MED-5010",
+            "paragraph_top_doc": "MED-4618",
+            "paragraph_top_doc_score": 0.27256590127944946,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.27256590127944946,
+            "best_para_text": "In vitro evaluation of genotoxicity of avocado (Persea americana) fruit and leaf extracts in human peripheral lymphocytes. Persea americana is much sought after both for the nutritional value of its fruit and the medicinal values of its various plant parts. A chromosomal aberration assay was undertaken to evaluate the potential genotoxicity of crude extracts from avocado fruits and leaves. Chromosomal aberrations were observed in cultured human peripheral lymphocytes exposed to separately increasing concentrations of 50% methanolic extracts of Persea americana fruit and leaves. The groups exposed to leaf and fruit extracts, respectively, showed a concentration-dependent increase in chromosomal aberrations as compared to that in a control group. The mean percentage total aberrant metaphases at 100 mg/kg, 200 mg/kg, and 300 mg/kg concentrations of leaf extract were found respectively"
+          },
+          {
+            "query_id": "PLAIN-44",
+            "query": "Who Should be Careful About Curcumin?",
+            "single_rr": 0.25,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.75,
+            "single_top_doc": "MED-2786",
+            "paragraph_top_doc": "MED-2810",
+            "paragraph_top_doc_score": 0.2851746678352356,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 1,
+            "best_para_score": 0.2851746678352356,
+            "best_para_text": "suggest that curcumin has potential as an antiproliferative, anti-invasive, and antiangiogenic agent; as a mediator of chemoresistance and radioresistance; as a chemopreventive agent; and as a therapeutic agent in wound healing, diabetes, Alzheimer disease, Parkinson disease, cardiovascular disease, pulmonary disease, and arthritis. Pilot phase I clinical trials have shown curcumin to be safe even when consumed at a daily dose of 12g for 3 months. Other clinical trials suggest a potential therapeutic role for curcumin in diseases such as familial adenomatous polyposis, inflammatory bowel disease, ulcerative colitis, colon cancer, pancreatic cancer, hypercholesteremia, atherosclerosis, pancreatitis, psoriasis, chronic anterior uveitis and arthritis. Thus, curcumin, a spice once relegated to the kitchen shelf, has moved into the clinic and may prove to be \"Curecumin\"."
+          },
+          {
+            "query_id": "PLAIN-827",
+            "query": "carcinogens",
+            "single_rr": 0.3333333333333333,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.6666666666666667,
+            "single_top_doc": "MED-4391",
+            "paragraph_top_doc": "MED-2106",
+            "paragraph_top_doc_score": 0.27074357867240906,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.27074357867240906,
+            "best_para_text": "Bile acids as carcinogens in human gastrointestinal cancers. Bile acids were first proposed to be carcinogens in 1939 and 1940. On the basis of later work with rodent models, bile acids came to be regarded as cancer promoters rather than carcinogens. However, considerable indirect evidence, obtained more recently, supports the view that bile acids are carcinogens in humans. At least 15 reports, from 1980 through 2003, indicate that bile acids cause DNA damage. The mechanism is probably indirect, involving induction of oxidative stress and production of reactive oxygen species that then damage DNA. Repeated DNA damage likely increases the mutation rate, including the mutation rate of tumor suppressor genes and oncogenes. Additional reports, from 1994 through 2002, indicate that bile acids, at the increased concentrations accompanying a high"
+          },
+          {
+            "query_id": "PLAIN-2690",
+            "query": "Chronic Headaches and Pork Tapeworms",
+            "single_rr": 0.3333333333333333,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.6666666666666667,
+            "single_top_doc": "MED-4818",
+            "paragraph_top_doc": "MED-3175",
+            "paragraph_top_doc_score": 0.26279953122138977,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.26279953122138977,
+            "best_para_text": "Neurocysticercosis in pregnancy: not just another headache. Infection with pork tapeworm, or Taenia solium, affects approximately 50 million people worldwide. The most important and potentially devastating form of the infestation, neurocysticercosis, occurs when the parasite invades the central nervous system. There has been a significant increase in the number of cases in the United States due to immigration from endemic areas. This case study of a pregnant woman in the 35th week of gestation exemplifies the serious consequences of this infection in pregnancy, and discusses an evidence-based approach to the diagnosis, treatment and eradication of this preventable disease. © 2012 AWHONN."
+          },
+          {
+            "query_id": "PLAIN-2830",
+            "query": "Neurobiology of Artificial Sweeteners",
+            "single_rr": 0.3333333333333333,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.6666666666666667,
+            "single_top_doc": "MED-5054",
+            "paragraph_top_doc": "MED-4120",
+            "paragraph_top_doc_score": 0.38431280851364136,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 1,
+            "best_para_score": 0.38431280851364136,
+            "best_para_text": "caloric from the non-caloric sweetener, although the conscious mind could not. This could have important implications on how effective artificial sweeteners are in their ability to substitute sugar intake."
+          },
+          {
+            "query_id": "PLAIN-270",
+            "query": "Is Caffeinated Tea Really Dehydrating?",
+            "single_rr": 0.5,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.5,
+            "single_top_doc": "MED-1648",
+            "paragraph_top_doc": "MED-4331",
+            "paragraph_top_doc_score": 0.24701981246471405,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.24701981246471405,
+            "best_para_text": "Black tea is not significantly different from water in the maintenance of normal hydration in human subjects: results from a randomised controlled ... There is a belief that caffeinated drinks, such as tea, may adversely affect hydration. This was investigated in a randomised controlled trial. Healthy resting males (n 21) were recruited from the general population. Following 24 h of abstention from caffeine, alcohol and vigorous physical activity, including a 10 h overnight fast, all men underwent four separate test days in a counter-balanced order with a 5 d washout in between. The test beverages, provided at regular intervals, were 4 × 240 ml black (i.e. regular) tea and 6 × 240 ml black tea, providing 168 or 252 mg of caffeine. The controls were identical amounts of"
+          },
+          {
+            "query_id": "PLAIN-1225",
+            "query": "fructose",
+            "single_rr": 0.5,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.5,
+            "single_top_doc": "MED-918",
+            "paragraph_top_doc": "MED-1675",
+            "paragraph_top_doc_score": 0.3578873872756958,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 2,
+            "best_para_score": 0.3578873872756958,
+            "best_para_text": "95% CI 1.047-1.257, p=0.003) were independently linked to severe fibrosis. No association was found between fructose intake and liver necroinflammatory activity, steatosis, and the features of NASH. CONCLUSIONS: The daily intake of industrial, not fruit fructose is a risk factor for metabolic alterations and the severity of liver fibrosis in patients with G1 CHC. Copyright © 2013 European Association for the Study of the Liver. Published by Elsevier B.V. All rights reserved."
+          },
+          {
+            "query_id": "PLAIN-1262",
+            "query": "Global Burden of Disease Study",
+            "single_rr": 0.5,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.5,
+            "single_top_doc": "MED-983",
+            "paragraph_top_doc": "MED-5293",
+            "paragraph_top_doc_score": 0.3238864541053772,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 1,
+            "best_para_score": 0.3238864541053772,
+            "best_para_text": "factors and clusters of risk factors for 21 regions in 1990 and 2010. We estimated exposure distributions for each year, region, sex, and age group, and relative risks per unit of exposure by systematically reviewing and synthesising published and unpublished data. We used these estimates, together with estimates of cause-specific deaths and DALYs from the Global Burden of Disease Study 2010, to calculate the burden attributable to each risk factor exposure compared with the theoretical-minimum-risk exposure. We incorporated uncertainty in disease burden, relative risks, and exposures into our estimates of attributable burden. Findings In 2010, the three leading risk factors for global disease burden were high blood pressure (7·0% [95% uncertainty interval 6·2–7·7] of global DALYs), tobacco smoking including second-hand smoke (6·3% [5·5–7·0]), and alcohol use (5·5% [5·0–5·9])."
+          }
+        ],
+        "largest_single_vector_wins": [
+          {
+            "query_id": "PLAIN-227",
+            "query": "Increasing Muscle Strength with Fenugreek",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.0049504950495049506,
+            "rr_gain": -0.995049504950495,
+            "single_top_doc": "MED-4150",
+            "paragraph_top_doc": "MED-3459",
+            "paragraph_top_doc_score": 0.24617598950862885,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 2,
+            "best_para_score": 0.24617598950862885,
+            "best_para_text": "creatine kinase levels, and less pressure pain threshold and muscle soreness (P < .05) compared with the control group. However, no effect on thigh circumference was evident (P < .05). Conclusions: Administered before eccentric exercise, WBVT may reduce DOMS via muscle function improvement. Further investigation should be undertaken to ascertain the effectiveness of WBVT in attenuating DOMS in athletes."
+          },
+          {
+            "query_id": "PLAIN-2490",
+            "query": "The Actual Benefit of Diet vs. Drugs",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.010869565217391304,
+            "rr_gain": -0.9891304347826086,
+            "single_top_doc": "MED-1490",
+            "paragraph_top_doc": "MED-5198",
+            "paragraph_top_doc_score": 0.2254263460636139,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 0,
+            "best_para_score": 0.2254263460636139,
+            "best_para_text": "Why do African Americans get more colon cancer than Native Africans? The incidence of colorectal cancer (CRC) is dramatically higher in African Americans (AAs) than in Native Africans (NAs) (60:100,000 vs. <1:100,000) and slightly higher than in Caucasian Americans (CAs). To explore whether the difference could be explained by interactions between diet and colonic bacterial flora, we compared randomly selected samples of healthy 50- to 65-y-old AAs (n = 17) with NAs (n = 18) and CAs (n = 17). Diet was measured by 3-d recall, and colonic metabolism by breath hydrogen and methane responses to oral lactulose. Fecal samples were cultured for 7-alpha dehydroxylating bacteria and Lactobacillus plantarum. Colonoscopic mucosal biopsies were taken to measure proliferation rates. In comparison with NAs, AAs consumed more (P < 0.01)"
+          },
+          {
+            "query_id": "PLAIN-2670",
+            "query": "Is Caramel Color Carcinogenic?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.013888888888888888,
+            "rr_gain": -0.9861111111111112,
+            "single_top_doc": "MED-2994",
+            "paragraph_top_doc": "MED-4659",
+            "paragraph_top_doc_score": 0.30928999185562134,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 1,
+            "best_para_score": 0.30928999185562134,
+            "best_para_text": "faces. The color preferences described here resemble the red and yellow color cues to health displayed by many species of nonhuman animals."
+          },
+          {
+            "query_id": "PLAIN-3074",
+            "query": "How to Help Prevent Abdominal Aortic Aneurysms",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.014084507042253521,
+            "rr_gain": -0.9859154929577465,
+            "single_top_doc": "MED-4555",
+            "paragraph_top_doc": "MED-4271",
+            "paragraph_top_doc_score": 0.22778701782226562,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 0,
+            "best_para_score": 0.22778701782226562,
+            "best_para_text": "Mechanisms of primary cancer prevention by butyrate and other products formed during gut flora-mediated fermentation of dietary fibre. Dietary fibres are indigestible food ingredients that reach the colon and are then fermented by colonic bacteria, resulting mainly in the formation of short-chain fatty acids (SCFA) such as acetate, propionate, and butyrate. Those SCFA, especially butyrate, are recognised for their potential to act on secondary chemoprevention by slowing growth and activating apoptosis in colon cancer cells. Additionally, SCFA can also act on primary prevention by activation of different drug metabolising enzymes. This can reduce the burden of carcinogens and, therefore, decrease the number of mutations, reducing cancer risk. Activation of GSTs by butyrate has been studied on mRNA, protein, and enzyme activity level by real-time RT-PCR, cDNA microarrays, Western"
+          },
+          {
+            "query_id": "PLAIN-946",
+            "query": "coma",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.015151515151515152,
+            "rr_gain": -0.9848484848484849,
+            "single_top_doc": "MED-4381",
+            "paragraph_top_doc": "MED-4022",
+            "paragraph_top_doc_score": 0.2145954817533493,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 1,
+            "best_para_score": 0.2145954817533493,
+            "best_para_text": "prevalence, whereas prevalence for CP among all vasculogenic patients with ED was highest among severe ED (81.8%). Association of CP and vasculogenic ED was found to be correlated positively, but it showed no statistical significance. Two of five patients were found to have vascular insufficiency. CONCLUSIONS: It can be hypothesized that an association exists between vasculogenic ED and CP in young males. However, a large-scale study with confounder analysis and a longitudinal follow-up is warranted."
+          },
+          {
+            "query_id": "PLAIN-407",
+            "query": "Is annatto food coloring safe?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.02564102564102564,
+            "rr_gain": -0.9743589743589743,
+            "single_top_doc": "MED-906",
+            "paragraph_top_doc": "MED-4079",
+            "paragraph_top_doc_score": 0.2165914922952652,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 2,
+            "best_para_score": 0.2165914922952652,
+            "best_para_text": "safe and efficacious botanically derived medical food treatment program for the amelioration of FM symptoms."
+          },
+          {
+            "query_id": "PLAIN-2610",
+            "query": "Treating Asthma With Plants vs. Supplements?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.06666666666666667,
+            "rr_gain": -0.9333333333333333,
+            "single_top_doc": "MED-2452",
+            "paragraph_top_doc": "MED-2333",
+            "paragraph_top_doc_score": 0.2742741107940674,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 1,
+            "best_para_score": 0.2742741107940674,
+            "best_para_text": "plants, evolution of plant defenses exploiting shared signals in animals, and the medicinal use of plants by humans. Comparative study of the signalling and response mechanisms used by plants, animals, and microbes provides novel and useful insights to the ecology and evolution of interactions across kingdoms."
+          },
+          {
+            "query_id": "PLAIN-383",
+            "query": "What do you think of Dr. Jenkins' take on paleolithic diets?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.09090909090909091,
+            "rr_gain": -0.9090909090909091,
+            "single_top_doc": "MED-4299",
+            "paragraph_top_doc": "MED-2498",
+            "paragraph_top_doc_score": 0.28665590286254883,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 0,
+            "best_para_score": 0.28665590286254883,
+            "best_para_text": "Dietary Restriction, Growth Factors and Aging: from yeast to humans Dietary restriction (DR) and reduced growth factor signaling both elevate resistance to oxidative stress, reduce macromolecular damage, and increase lifespan in model organisms. In rodents, both DR and decreased growth factor signaling reduce the incidence of tumors and slow down cognitive decline and aging. DR reduces cancer and cardiovascular disease and mortality in monkeys, and reduces metabolic traits associated with diabetes, cardiovascular disease and cancer in humans. Neoplasias and diabetes are also rare in humans with loss of function mutations in the growth hormone receptor. DR and reduced growth factor signaling may thus slow aging by similar, evolutionarily conserved, mechanisms. We review these conserved anti-aging pathways in model organisms, discuss their link to disease prevention in mammals, and"
+          },
+          {
+            "query_id": "PLAIN-320",
+            "query": "Breast Cancer and Diet",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.1,
+            "rr_gain": -0.9,
+            "single_top_doc": "MED-5184",
+            "paragraph_top_doc": "MED-1825",
+            "paragraph_top_doc_score": 0.32262280583381653,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 2,
+            "best_para_score": 0.32262280583381653,
+            "best_para_text": "breast cancer patients. Conclusions. Current evidence suggests that flax may be associated with decreased risk of breast cancer. Flax demonstrates antiproliferative effects in breast tissue of women at risk of breast cancer and may protect against primary breast cancer. Mortality risk may also be reduced among those living with breast cancer. © The Author(s) 2013."
+          },
+          {
+            "query_id": "PLAIN-1419",
+            "query": "insects",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.1,
+            "rr_gain": -0.9,
+            "single_top_doc": "MED-4198",
+            "paragraph_top_doc": "MED-4072",
+            "paragraph_top_doc_score": 0.20905867218971252,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 2,
+            "best_para_score": 0.20905867218971252,
+            "best_para_text": "that HCA intake is a surrogate of other genotoxic substances, such as polycyclic aromatic hydrocarbons, in meat prepared at high temperatures."
+          }
+        ]
+      },
+      "grouped_analysis": {
+        "by_relevant_doc_length": {
+          "high": {
+            "query_count": 105.0,
+            "single_mrr": 0.46966735857662945,
+            "paragraph_mrr": 0.4103239541270166,
+            "mrr_delta": -0.059343404449612835
+          },
+          "low": {
+            "query_count": 111.0,
+            "single_mrr": 0.5651644159992206,
+            "paragraph_mrr": 0.48803455913940436,
+            "mrr_delta": -0.07712985685981627
+          },
+          "mid": {
+            "query_count": 107.0,
+            "single_mrr": 0.4587946720451834,
+            "paragraph_mrr": 0.33876240983184935,
+            "mrr_delta": -0.12003226221333407
+          }
+        },
+        "by_relevant_doc_segment_count": {
+          "mid": {
+            "query_count": 117.0,
+            "single_mrr": 0.4542110093218934,
+            "paragraph_mrr": 0.3899257962234164,
+            "mrr_delta": -0.06428521309847701
+          },
+          "low": {
+            "query_count": 203.0,
+            "single_mrr": 0.5221510573627223,
+            "paragraph_mrr": 0.4206015317324076,
+            "mrr_delta": -0.10154952563031466
+          },
+          "high": {
+            "query_count": 3.0,
+            "single_mrr": 0.6666666666666666,
+            "paragraph_mrr": 0.8333333333333334,
+            "mrr_delta": 0.16666666666666674
+          }
+        }
+      },
+      "runtime": {
+        "stage1_seconds": 0.9906072616577148,
+        "paragraph_rerank_seconds": 6173.38271021843,
+        "avg_segments_per_candidate": 2.2597708978328175,
+        "avg_scored_segments_per_query": 1129.8854489164087
+      }
+    },
+    "scifact": {
+      "single_vector": {
+        "mrr@10": 0.5756494708994708,
+        "recall@10": 0.7598333333333332,
+        "precision@10": 0.08300000000000023,
+        "hit@10": 0.7766666666666666,
+        "ndcg@10": 0.6148515404939806
+      },
+      "paragraph_level": {
+        "mrr@10": 0.4066891534391534,
+        "recall@10": 0.5715,
+        "precision@10": 0.06166666666666664,
+        "hit@10": 0.5933333333333334,
+        "ndcg@10": 0.43990273513149325
+      },
+      "query_level_comparison": {
+        "counts": {
+          "paragraph_better": 40,
+          "single_better": 142,
+          "tie": 118
+        },
+        "best_paragraph_wins": [
+          {
+            "query_id": "718",
+            "query": "Low nucleosome occupancy correlates with low methylation levels across species.",
+            "single_rr": 0.25,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.75,
+            "single_top_doc": "18895793",
+            "paragraph_top_doc": "17587795",
+            "paragraph_top_doc_score": 0.24250860512256622,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 1,
+            "best_para_score": 0.24250860512256622,
+            "best_para_text": "approach the physical limits of chromatin compaction. These features constitute a previously unappreciated genome architecture, in which dense methylation influences nucleosome positions, likely facilitating nuclear processes under extreme spatial constraints."
+          },
+          {
+            "query_id": "830",
+            "query": "NF2 (Merlin) causes phosphorylation and subsequent cytoplasmic sequestration of YAP in Drosophila by activating LATS1/2 kinases.",
+            "single_rr": 0.25,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.75,
+            "single_top_doc": "52873726",
+            "paragraph_top_doc": "1897324",
+            "paragraph_top_doc_score": 0.24334405362606049,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.24334405362606049,
+            "best_para_text": "A genetic screen identifies an LKB1–MARK signalling axis controlling the Hippo–YAP pathway The Hippo–YAP pathway is an emerging signalling cascade involved in the regulation of stem cell activity and organ size. To identify components of this pathway, we performed an RNAi-based kinome screen in human cells. Our screen identified several kinases not previously associated with Hippo signalling that control multiple cellular processes. One of the hits, LKB1, is a common tumour suppressor whose mechanism of action is only partially understood. We demonstrate that LKB1 acts through its substrates of the microtubule affinity-regulating kinase family to regulate the localization of the polarity determinant Scribble and the activity of the core Hippo kinases. Our data also indicate that YAP is functionally important for the tumour suppressive effects of LKB1. Our"
+          },
+          {
+            "query_id": "971",
+            "query": "Primary cervical cancer screening with HPV detection has higher longitudinal sensitivity than conventional cytology to detect cervical intraepithelial neoplasia grade 2.",
+            "single_rr": 0.25,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.75,
+            "single_top_doc": "829646",
+            "paragraph_top_doc": "27873158",
+            "paragraph_top_doc_score": 0.4799702763557434,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.4799702763557434,
+            "best_para_text": "Efficacy of human papillomavirus testing for the detection of invasive cervical cancers and cervical intraepithelial neoplasia: a randomised controlled trial. BACKGROUND Human papillomavirus (HPV) testing is known to be more sensitive, but less specific than cytology for detecting cervical intraepithelial neoplasia (CIN). We assessed the efficacy of cervical-cancer screening policies that are based on HPV testing. METHODS Between March, 2004, and December, 2004, in two separate recruitment phases, women aged 25-60 years were randomly assigned to conventional cytology or to HPV testing in combination with liquid-based cytology (first phase) or alone (second phase). Randomisation was done by computer in two screening centres and by sequential opening of numbered sealed envelopes in the remaining seven centres. During phase one, women who were HPV-positive and aged 35-60 years were referred"
+          },
+          {
+            "query_id": "1041",
+            "query": "Replacement of histone H2A with H2A.Z slows gene activation in yeasts by stabilizing +1 nucleosomes.",
+            "single_rr": 0.25,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.75,
+            "single_top_doc": "9451052",
+            "paragraph_top_doc": "25254425",
+            "paragraph_top_doc_score": 0.38305652141571045,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.38305652141571045,
+            "best_para_text": "Nucleosome stability mediated by histone variants H3.3 and H2A.Z. Nucleosomes containing the histone variant H3.3 tend to be clustered in vivo in the neighborhood of transcriptionally active genes and over regulatory elements. It has not been clear, however, whether H3.3-containing nucleosomes possess unique properties that would affect transcription. We report here that H3.3 nucleosomes isolated from vertebrates, regardless of whether they are partnered with H2A or H2A.Z, are unusually sensitive to salt-dependent disruption, losing H2A/H2B or H2A.Z/H2B dimers. Immunoprecipitation studies of nucleosome core particles (NCPs) show that NCPs that contain both H3.3 and H2A.Z are even less stable than NCPs containing H3.3 and H2A. Intriguingly, NCPs containing H3 and H2A.Z are at least as stable as H3/H2A NCPs. These results establish an hierarchy of stabilities for native nucleosomes"
+          },
+          {
+            "query_id": "249",
+            "query": "Chenodeosycholic acid treatment reduces whole-body energy expenditure.",
+            "single_rr": 0.3333333333333333,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.6666666666666667,
+            "single_top_doc": "25050364",
+            "paragraph_top_doc": "1568684",
+            "paragraph_top_doc_score": 0.3125821650028229,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.3125821650028229,
+            "best_para_text": "The Bile Acid Chenodeoxycholic Acid Increases Human Brown Adipose Tissue Activity. The interest in brown adipose tissue (BAT) as a target to combat metabolic disease has recently been renewed with the discovery of functional BAT in humans. In rodents, BAT can be activated by bile acids, which activate type 2 iodothyronine deiodinase (D2) in BAT via the G-coupled protein receptor TGR5, resulting in increased oxygen consumption and energy expenditure. Here we examined the effects of oral supplementation of the bile acid chenodeoxycholic acid (CDCA) on human BAT activity. Treatment of 12 healthy female subjects with CDCA for 2 days resulted in increased BAT activity. Whole-body energy expenditure was also increased upon CDCA treatment. In vitro treatment of primary human brown adipocytes derived with CDCA or specific TGR5 agonists"
+          },
+          {
+            "query_id": "415",
+            "query": "Female carriers of the Apolipoprotein E4 (APOE4) allele have increased risk for dementia.",
+            "single_rr": 0.3333333333333333,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.6666666666666667,
+            "single_top_doc": "4709641",
+            "paragraph_top_doc": "6309659",
+            "paragraph_top_doc_score": 0.35063523054122925,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 2,
+            "best_para_score": 0.35063523054122925,
+            "best_para_text": "95% confidence interval [CI], 1.12-2.84). The adjusted RR per year of increase was 1.04 (95% CI, 1.01-1.08). For risk of AD, the adjusted RRs were 1.51 (95% CI, 0.91-2.50) and 1.03 (95% CI, 1.00-1.07), respectively. Risk of dementia associated with a longer reproductive period was most pronounced in APOE epsilon4 carriers (adjusted RR for >39 reproductive years compared with <34 reproductive years, 4.20 [95% CI, 1.97-8.92] for dementia and 3.42 [95% CI, 1.51-7.75] for AD), whereas in noncarriers, no clear association with dementia or AD was observed. CONCLUSION Our findings do not support the hypothesis that a longer reproductive period reduces risk of dementia in women who have natural menopause."
+          },
+          {
+            "query_id": "922",
+            "query": "Patients in stable partnerships have a faster progression from HIV to AIDS.",
+            "single_rr": 0.3333333333333333,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.6666666666666667,
+            "single_top_doc": "11230569",
+            "paragraph_top_doc": "17077004",
+            "paragraph_top_doc_score": 0.2692791223526001,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 2,
+            "best_para_score": 0.2692791223526001,
+            "best_para_text": "A stable partnership is associated with a slower rate of progression to AIDS or death in HIV infected patients receiving HAART."
+          },
+          {
+            "query_id": "303",
+            "query": "DMRT1 is a sex-determining gene that is epigenetically regulated by the MHM region.",
+            "single_rr": 0.5,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.5,
+            "single_top_doc": "4085204",
+            "paragraph_top_doc": "4388470",
+            "paragraph_top_doc_score": 0.2365744262933731,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.2365744262933731,
+            "best_para_text": "Somatic sex identity is cell-autonomous in the chicken In the mammalian model of sex determination, embryos are considered to be sexually indifferent until the transient action of a sex-determining gene initiates gonadal differentiation. Although this model is thought to apply to all vertebrates, this has yet to be established. Here we have examined three lateral gynandromorph chickens (a rare, naturally occurring phenomenon in which one side of the animal appears male and the other female) to investigate the sex-determining mechanism in birds. These studies demonstrated that gynandromorph birds are genuine male:female chimaeras, and indicated that male and female avian somatic cells may have an inherent sex identity. To test this hypothesis, we transplanted presumptive mesoderm between embryos of reciprocal sexes to generate embryos containing male:female chimaeric gonads. In"
+          },
+          {
+            "query_id": "440",
+            "query": "Fz/PCP-dependent Pk localizes to the anterior membrane of notochord cells during zebrafish neuralation.",
+            "single_rr": 0.5,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.5,
+            "single_top_doc": "18575183",
+            "paragraph_top_doc": "4423559",
+            "paragraph_top_doc_score": 0.263780415058136,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.263780415058136,
+            "best_para_text": "Planar cell polarity signalling couples cell division and morphogenesis during neurulation Environmental and genetic aberrations lead to neural tube closure defects (NTDs) in 1 out of every 1,000 births. Mouse and frog models for these birth defects have indicated that Van Gogh-like 2 (Vangl2, also known as Strabismus) and other components of planar cell polarity (PCP) signalling might control neurulation by promoting the convergence of neural progenitors to the midline. Here we show a novel role for PCP signalling during neurulation in zebrafish. We demonstrate that non-canonical Wnt/PCP signalling polarizes neural progenitors along the anteroposterior axis. This polarity is transiently lost during cell division in the neural keel but is re-established as daughter cells reintegrate into the neuroepithelium. Loss of zebrafish Vangl2 (in trilobite mutants) abolishes the polarization"
+          },
+          {
+            "query_id": "507",
+            "query": "Helminths interfere with immune system control of macrophages activated by IL-4 favor Mycobacterium tuberculosis replication.",
+            "single_rr": 0.5,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.5,
+            "single_top_doc": "35079452",
+            "paragraph_top_doc": "30774694",
+            "paragraph_top_doc_score": 0.28886693716049194,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.28886693716049194,
+            "best_para_text": "T helper 2 cytokines inhibit autophagic control of intracellular Mycobacterium tuberculosis. Autophagy is a recently recognized immune effector mechanism against intracellular pathogens. The role of autophagy in innate immunity has been well established, but the extent of its regulation by the adaptive immune response is less well understood. The T helper 1 (Th1) cell cytokine IFN-gamma induces autophagy in macrophages to eliminate Mycobacterium tuberculosis. Here, we report that Th2 cytokines affect autophagy in macrophages and their ability to control intracellular M. tuberculosis. IL-4 and IL-13 abrogated autophagy and autophagy-mediated killing of intracellular mycobacteria in murine and human macrophages. Inhibition of starvation-induced autophagy by IL-4 and IL-13 was dependent on Akt signaling, whereas the inhibition of IFN-gamma-induced autophagy was Akt independent and signal transducer and activator of transcription 6"
+          }
+        ],
+        "largest_single_vector_wins": [
+          {
+            "query_id": "1282",
+            "query": "Therapeutic use of the drug Dapsone to treat pyoderma gangrenous is based on anecdotal evidence.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.002793296089385475,
+            "rr_gain": -0.9972067039106145,
+            "single_top_doc": "23649163",
+            "paragraph_top_doc": "4418878",
+            "paragraph_top_doc_score": 0.21657884120941162,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 1,
+            "best_para_score": 0.21657884120941162,
+            "best_para_text": "in tumours and clinically relevant associations with disease outcomes. Combining signature-based predictions across several pathways identifies coordinated patterns of pathway deregulation that distinguish between specific cancers and tumour subtypes. Clustering tumours based on pathway signatures further defines prognosis in respective patient subsets, demonstrating that patterns of oncogenic pathway deregulation underlie the development of the oncogenic phenotype and reflect the biology and outcome of specific cancers. Predictions of pathway deregulation in cancer cell lines are also shown to predict the sensitivity to therapeutic agents that target components of the pathway. Linking pathway deregulation with sensitivity to therapeutics that target components of the pathway provides an opportunity to make use of these oncogenic pathway signatures to guide the use of targeted therapeutics."
+          },
+          {
+            "query_id": "1319",
+            "query": "Transplanted human glial cells can differentiate within the host animal.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.003436426116838488,
+            "rr_gain": -0.9965635738831615,
+            "single_top_doc": "16284655",
+            "paragraph_top_doc": "17150648",
+            "paragraph_top_doc_score": 0.2718065679073334,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 0,
+            "best_para_score": 0.2718065679073334,
+            "best_para_text": "Leptin regulates glutamate and glucose transporters in hypothalamic astrocytes. Glial cells perform critical functions that alter the metabolism and activity of neurons, and there is increasing interest in their role in appetite and energy balance. Leptin, a key regulator of appetite and metabolism, has previously been reported to influence glial structural proteins and morphology. Here, we demonstrate that metabolic status and leptin also modify astrocyte-specific glutamate and glucose transporters, indicating that metabolic signals influence synaptic efficacy and glucose uptake and, ultimately, neuronal function. We found that basal and glucose-stimulated electrical activity of hypothalamic proopiomelanocortin (POMC) neurons in mice were altered in the offspring of mothers fed a high-fat diet. In adulthood, increased body weight and fasting also altered the expression of glucose and glutamate transporters. These results demonstrate"
+          },
+          {
+            "query_id": "1202",
+            "query": "The center of the granuloma in an immune cell induces a pro-inflammatory immune response.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.004081632653061225,
+            "rr_gain": -0.9959183673469387,
+            "single_top_doc": "3475317",
+            "paragraph_top_doc": "29023309",
+            "paragraph_top_doc_score": 0.23547859489917755,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 1,
+            "best_para_score": 0.23547859489917755,
+            "best_para_text": "that IL-17 deficiency causes defects in mucosal barrier function. We conclude that SIV infection impairs the IL-17 axis, an arm of the mucosal immune response preventing systemic microbial dissemination from the gastrointestinal tract."
+          },
+          {
+            "query_id": "51",
+            "query": "ALDH1 expression is associated with better breast cancer outcomes.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.006493506493506494,
+            "rr_gain": -0.9935064935064936,
+            "single_top_doc": "45638119",
+            "paragraph_top_doc": "2140497",
+            "paragraph_top_doc_score": 0.3365042805671692,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 2,
+            "best_para_score": 0.3365042805671692,
+            "best_para_text": "cancer than having nondense breasts (for DY: HR of breast cancer incidence = 1.67, 95% CI = 1.03 to 2.73; for P2: HR of breast cancer incidence = 1.96, 95% CI = 1.20 to 3.21; for P1: HR of breast cancer incidence = 1.23, 95% CI = 0.67 to 2.26; P(trend) = .02). Having a combination of no involution and dense breasts was associated with higher risk of breast cancer than having complete involution and nondense breasts (HR of breast cancer incidence = 4.08, 95% CI = 1.72 to 9.68; P = .006). CONCLUSION Lobular involution and MBD are independently associated with breast cancer incidence; combined, they are associated with an even greater risk for breast cancer."
+          },
+          {
+            "query_id": "99",
+            "query": "Alizarin forms hydrogen bonds with residues involved in PGAM1 substrate binding.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.007194244604316547,
+            "rr_gain": -0.9928057553956835,
+            "single_top_doc": "18810195",
+            "paragraph_top_doc": "20279166",
+            "paragraph_top_doc_score": 0.2520027756690979,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 0,
+            "best_para_score": 0.2520027756690979,
+            "best_para_text": "Label-free DNA imaging in vivo with stimulated Raman scattering microscopy. Label-free DNA imaging is highly desirable in biology and medicine to perform live imaging without affecting cell function and to obtain instant histological tissue examination during surgical procedures. Here we show a label-free DNA imaging method with stimulated Raman scattering (SRS) microscopy for visualization of the cell nuclei in live animals and intact fresh human tissues with subcellular resolution. Relying on the distinct Raman spectral features of the carbon-hydrogen bonds in DNA, the distribution of DNA is retrieved from the strong background of proteins and lipids by linear decomposition of SRS images at three optimally selected Raman shifts. Based on changes on DNA condensation in the nucleus, we were able to capture chromosome dynamics during cell division both"
+          },
+          {
+            "query_id": "1024",
+            "query": "Recurrent mutations occur frequently within CTCF anchor sites adjacent to oncogenes.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.0072992700729927005,
+            "rr_gain": -0.9927007299270073,
+            "single_top_doc": "5373138",
+            "paragraph_top_doc": "43311750",
+            "paragraph_top_doc_score": 0.21702025830745697,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 1,
+            "best_para_score": 0.21702025830745697,
+            "best_para_text": "heterozygous or homozygous NPHS1 mutations were identified in five familial and seven sporadic cases, including one patient 27 years old at onset of the disease. Substitutions were classified as 'severe' or 'mild' using this in silico approach. Our results suggest an earlier onset of the disease in patients with two 'severe' mutations compared to patients with at least one 'mild' mutation. The finding of mutations in a patient with adult-onset focal segmental glomerulosclerosis indicates that NPHS1 analysis could be considered in patients with later onset of the disease."
+          },
+          {
+            "query_id": "53",
+            "query": "ALDH1 expression is associated with poorer prognosis in breast cancer.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.008403361344537815,
+            "rr_gain": -0.9915966386554622,
+            "single_top_doc": "45638119",
+            "paragraph_top_doc": "14726759",
+            "paragraph_top_doc_score": 0.2938750982284546,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 1,
+            "best_para_score": 0.2938750982284546,
+            "best_para_text": "infection in infarction patients were associated with a poorer outcome. ICAD patients had less often brain infarction, but the strokes they had were more severe. Seven (2.3%) patients died during the follow-up (mean 4.0 years, 1186 patient years). Six (2%) patients had verified CAD recurrence. CONCLUSIONS This study provides evidence for the association of CAD with male sex, and possible association with smoking and migraine. Occlusion of the dissected artery, ICAD, and infection appear to be associated with poorer outcome."
+          },
+          {
+            "query_id": "985",
+            "query": "Pseudogene PTENP1 regulates the expression of PTEN by functioning as an miRNA decoy.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.00847457627118644,
+            "rr_gain": -0.9915254237288136,
+            "single_top_doc": "6828370",
+            "paragraph_top_doc": "12337611",
+            "paragraph_top_doc_score": 0.2228127419948578,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 0,
+            "best_para_score": 0.2228127419948578,
+            "best_para_text": "LIN28B induces neuroblastoma and enhances MYCN levels via let-7 suppression LIN28B regulates developmental processes by modulating microRNAs (miRNAs) of the let-7 family. A role for LIN28B in cancer has been proposed but has not been established in vivo. Here, we report that LIN28B showed genomic aberrations and extensive overexpression in high-risk neuroblastoma compared to several other tumor entities and normal tissues. High LIN28B expression was an independent risk factor for adverse outcome in neuroblastoma. LIN28B signaled through repression of the let-7 miRNAs and consequently resulted in elevated MYCN protein expression in neuroblastoma cells. LIN28B–let-7–MYCN signaling blocked differentiation of normal neuroblasts and neuroblastoma cells. These findings were fully recapitulated in a mouse model in which LIN28B expression in the sympathetic adrenergic lineage induced development of neuroblastomas marked by low"
+          },
+          {
+            "query_id": "960",
+            "query": "Polymeal nutrition reduces cardiovascular mortality.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.00909090909090909,
+            "rr_gain": -0.990909090909091,
+            "single_top_doc": "8780599",
+            "paragraph_top_doc": "25355575",
+            "paragraph_top_doc_score": 0.2923399806022644,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 0,
+            "best_para_score": 0.2923399806022644,
+            "best_para_text": "High cardiovascular mortality in Russia cannot be explained by the classical risk factors. The Arkhangelsk study 2000 Since the beginning of the 1990s the public health situation in Russia has been characterized by an extremely high mortality and a significant reduction in life expectancy. Cardiovascular diseases remained the major cause of death. Only a few large population studies were conducted in Russia during this period. A total of 1968 men and 1737 women aged 18–75 years participated in a health survey in Arkhangelsk, Russia, over the period 1999–2000. Investigation included assessment of classic cardiovascular risk factors (family history, smoking, blood pressure, and blood lipids) along with general health variables. The paper presents sex specific data on risk factors for coronary heart disease. Though the cardiovascular mortality is high"
+          },
+          {
+            "query_id": "839",
+            "query": "Nanoparticles can be targeted against specific cell types by incorporating aptamers into lipid nanoparticles.",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.011363636363636364,
+            "rr_gain": -0.9886363636363636,
+            "single_top_doc": "1469751",
+            "paragraph_top_doc": "31715818",
+            "paragraph_top_doc_score": 0.3336247503757477,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 0,
+            "best_para_score": 0.3336247503757477,
+            "best_para_text": "New opportunities: the use of nanotechnologies to manipulate and track stem cells. Nanotechnologies are emerging platforms that could be useful in measuring, understanding, and manipulating stem cells. Examples include magnetic nanoparticles and quantum dots for stem cell labeling and in vivo tracking; nanoparticles, carbon nanotubes, and polyplexes for the intracellular delivery of genes/oligonucleotides and protein/peptides; and engineered nanometer-scale scaffolds for stem cell differentiation and transplantation. This review examines the use of nanotechnologies for stem cell tracking, differentiation, and transplantation. We further discuss their utility and the potential concerns regarding their cytotoxicity."
+          }
+        ]
+      },
+      "grouped_analysis": {
+        "by_relevant_doc_length": {
+          "low": {
+            "query_count": 103.0,
+            "single_mrr": 0.5335827411827989,
+            "paragraph_mrr": 0.3525342645684798,
+            "mrr_delta": -0.1810484766143191
+          },
+          "high": {
+            "query_count": 99.0,
+            "single_mrr": 0.5668737775442209,
+            "paragraph_mrr": 0.48373846232818196,
+            "mrr_delta": -0.0831353152160389
+          },
+          "mid": {
+            "query_count": 98.0,
+            "single_mrr": 0.6467353404851398,
+            "paragraph_mrr": 0.4084561808030505,
+            "mrr_delta": -0.2382791596820893
+          }
+        },
+        "by_relevant_doc_segment_count": {
+          "low": {
+            "query_count": 219.0,
+            "single_mrr": 0.5733687181941178,
+            "paragraph_mrr": 0.37289479786474566,
+            "mrr_delta": -0.20047392032937217
+          },
+          "high": {
+            "query_count": 81.0,
+            "single_mrr": 0.6036029679226909,
+            "paragraph_mrr": 0.5255047161402847,
+            "mrr_delta": -0.07809825178240615
+          }
+        }
+      },
+      "runtime": {
+        "stage1_seconds": 1.1219336986541748,
+        "paragraph_rerank_seconds": 7337.72523021698,
+        "avg_segments_per_candidate": 2.1343,
+        "avg_scored_segments_per_query": 1067.15
+      }
+    },
+    "fiqa": {
+      "single_vector": {
+        "mrr@10": 0.15865299823633153,
+        "recall@10": 0.17389735179087024,
+        "precision@10": 0.04120370370370378,
+        "hit@10": 0.30092592592592593,
+        "ndcg@10": 0.13068142295313034
+      },
+      "paragraph_level": {
+        "mrr@10": 0.13901197824808934,
+        "recall@10": 0.1310435106731403,
+        "precision@10": 0.029475308641975312,
+        "hit@10": 0.2361111111111111,
+        "ndcg@10": 0.10423670777204552
+      },
+      "query_level_comparison": {
+        "counts": {
+          "paragraph_better": 147,
+          "single_better": 324,
+          "tie": 177
+        },
+        "best_paragraph_wins": [
+          {
+            "query_id": "1198",
+            "query": "What are the consequences of IRS “reclassification” on both employer and employee?",
+            "single_rr": 0.00641025641025641,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.9935897435897436,
+            "single_top_doc": "233792",
+            "paragraph_top_doc": "56718",
+            "paragraph_top_doc_score": 0.3642238974571228,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 1,
+            "best_para_score": 0.3642238974571228,
+            "best_para_text": "Bob's problem, not the IRS). So in the scenario above, the IRS wouldn't care whose employee Bob is since Bob's S-Corp would have to pay all the same payroll taxes. The reclassification is an issue when employees are abused. See examples of Fedex drivers, where they're classified as contractors and are not getting any benefits, spend their own money on the truck and maintenance, etc. The employees are the ones who sued for reclassification, but in this case the IRS would be interested as well since a huge chunk of payroll taxes was not paid (driver's net is after car maintenance and payments, not before as it would be if he was salaried). So in your scenario reclassification is not as much a concern to Bob as his"
+          },
+          {
+            "query_id": "3189",
+            "query": "Diversify my retirement investments with a Roth IRA",
+            "single_rr": 0.007692307692307693,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.9923076923076923,
+            "single_top_doc": "125973",
+            "paragraph_top_doc": "272840",
+            "paragraph_top_doc_score": 0.37982067465782166,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.37982067465782166,
+            "best_para_text": "Without making specific recommendations, it is worthwhile to point out the differing tax treatments for a Roth IRA: investments in a Roth IRA will not be taxed when you withdraw them during retirement (unless they change the law on that or something crazy). So if you are thinking about investing in some areas with high risk and high potential reward (e.g. emerging market stocks) then the Roth IRA might be the place to do it. That way, if the investment works out, you have more money in the account that won't ever be taxed. We can talk about the possible risks of certain kinds of investments, but this is not an appropriate forum to recommend for or against them specifically. Healthcare stocks are subject to political risk in"
+          },
+          {
+            "query_id": "2204",
+            "query": "What's an economic explanation for why greeting cards are so expensive?",
+            "single_rr": 0.009900990099009901,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.9900990099009901,
+            "single_top_doc": "21810",
+            "paragraph_top_doc": "374030",
+            "paragraph_top_doc_score": 0.24598878622055054,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.24598878622055054,
+            "best_para_text": "As one answer points out, people buying greeting cards care little about whether they cost 25 cents or $5. Those are both small amounts of money and it's not something you buy often---also people feel the need to spend money because it's a gift. On the supplier side, it should be noted that the cost of cards has little to do with the paper they are printed on. There is an expectation that cards are new and unique...something the buyer and recipient have never seen. So they have writers and graphic designers constantly cranking out a large variety of cards and replacing existing cards with new ones, of which only a small number get sold before they move to the next model. Relatively speaking, there is a lot"
+          },
+          {
+            "query_id": "3724",
+            "query": "Should you always max out contributions to your 401k?",
+            "single_rr": 0.015151515151515152,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.9848484848484849,
+            "single_top_doc": "480036",
+            "paragraph_top_doc": "302512",
+            "paragraph_top_doc_score": 0.3541296720504761,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 3,
+            "best_para_score": 0.3541296720504761,
+            "best_para_text": "if you can afford to max it out, I surely would advise you to do so."
+          },
+          {
+            "query_id": "6611",
+            "query": "How does Vanguard determine the optimal asset allocation for their Target Retirement Funds?",
+            "single_rr": 0.09090909090909091,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.9090909090909091,
+            "single_top_doc": "268731",
+            "paragraph_top_doc": "293679",
+            "paragraph_top_doc_score": 0.3812254071235657,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.3812254071235657,
+            "best_para_text": "Googling vanguard target asset allocation led me to this page on the Bogleheads wiki which has detailed breakdowns of the Target Retirement funds; that page in turn has a link to this Vanguard PDF which goes into a good level of detail on the construction of these funds' portfolios. I excerpt: (To the question of why so much weight in equities:) In our view, two important considerations justify an expectation of an equity risk premium. The first is the historical record: In the past, and in many countries, stock market investors have been rewarded with such a premium. ... Historically, bond returns have lagged equity returns by about 5–6 percentage points, annualized—amounting to an enormous return differential in most circumstances over longer time periods. Consequently, retirement savers investing"
+          },
+          {
+            "query_id": "7936",
+            "query": "Why naked call writing is risky compare to Covered call?",
+            "single_rr": 0.09090909090909091,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.9090909090909091,
+            "single_top_doc": "276032",
+            "paragraph_top_doc": "363043",
+            "paragraph_top_doc_score": 0.44396692514419556,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 2,
+            "best_para_score": 0.44396692514419556,
+            "best_para_text": "lose you $29,250 in a naked call.Naked calls are speculative. Covered calls are strategic.\""
+          },
+          {
+            "query_id": "6131",
+            "query": "Is it ever a good idea to close credit cards?",
+            "single_rr": 0.1111111111111111,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.8888888888888888,
+            "single_top_doc": "257916",
+            "paragraph_top_doc": "326094",
+            "paragraph_top_doc_score": 0.35931217670440674,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.35931217670440674,
+            "best_para_text": "\"Yes, it can be a good idea to close unused credit cards. I am going to give some reasons why it can be a good idea to close unused accounts, and then I will talk about why it is NOT necessarily a bad idea. Why it can be a good idea to close unused accounts \"\"I'd like to close the cards.\"\" That is reason enough. Simplifying your financial life is a good thing. Fewer accounts let you focus your energy on the accounts that you actually use. Unused accounts still need to be monitored for fraud. You mentioned that you have high credit card balances that you are carrying. This may indicate that you have trouble using credit responsibly, and having more credit available to you might be"
+          },
+          {
+            "query_id": "2648",
+            "query": "How does unemployment insurance work?",
+            "single_rr": 0.14285714285714285,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.8571428571428572,
+            "single_top_doc": "296844",
+            "paragraph_top_doc": "307120",
+            "paragraph_top_doc_score": 0.4265722632408142,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 4,
+            "best_para_score": 0.4265722632408142,
+            "best_para_text": "Unemployment benefits. Regular unemployment benefits are paid for a maximum of 26 weeks in most states. However, additional weeks of extended unemployment benefits are available during times of high unemployment. The unemployment extension legislation passed by Congress in February 2012 changed the way the tiers of Emergency Unemployment Compensation (EUC) are structured. A tier of unemployment is an extension of a certain amount of weeks of unemployment benefits. There are currently four tiers of unemployment benefits. Each tier provides extra weeks of unemployment in addition to basic state unemployment benefits. Emergency Unemployment Compensation (EUC) Tiers June - August 2012: Source and further information can be found here - Unemployment Tiers - About.com Sources: Unemployment Insurance(UI) - US Dept. of Labor How Does Unemployment Insurance Work? - eHow Percentage"
+          },
+          {
+            "query_id": "864",
+            "query": "Why use accounting software like Quickbooks instead of Excel spreadsheets?",
+            "single_rr": 0.16666666666666666,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.8333333333333334,
+            "single_top_doc": "329774",
+            "paragraph_top_doc": "30142",
+            "paragraph_top_doc_score": 0.3501238226890564,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 0,
+            "best_para_score": 0.3501238226890564,
+            "best_para_text": "I think your reasons are good. Fundamentally accounting software is built to ensure you record your accounting data effectively with minimal mistakes and good auditing. But you still need to use the tool properly to get the benefit. One other advantage is that many accountants are familiar with, say QuickBooks, and can do your accounts more effectively if you use their preferred tool."
+          },
+          {
+            "query_id": "4845",
+            "query": "What is the difference between fund and portfolio?",
+            "single_rr": 0.16666666666666666,
+            "paragraph_rr": 1.0,
+            "rr_gain": 0.8333333333333334,
+            "single_top_doc": "118532",
+            "paragraph_top_doc": "40424",
+            "paragraph_top_doc_score": 0.3592817187309265,
+            "paragraph_top_doc_is_relevant": true,
+            "best_para_id": 4,
+            "best_para_score": 0.3592817187309265,
+            "best_para_text": "corporate bonds. So to reiterate, a portfolio is a collection of investments (think of an artist's portfolio, being a collection of their work). Usually, people refer to their own 'portfolio', of personal investments. A fund is someone's portfolio, that other people can invest in. This allows an individual investor to give some of their decision making over to a Fund manager. In addition to relying on expertise of others, this allows the investor to save on transaction costs, because they can have a well-diversified portfolio (see what I did there?) while only buying into one or a few funds.\""
+          }
+        ],
+        "largest_single_vector_wins": [
+          {
+            "query_id": "3453",
+            "query": "How does spot-futures arbitrage work in the gold market?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.015625,
+            "rr_gain": -0.984375,
+            "single_top_doc": "418626",
+            "paragraph_top_doc": "414088",
+            "paragraph_top_doc_score": 0.30347514152526855,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 0,
+            "best_para_score": 0.30347514152526855,
+            "best_para_text": "Can someone please explain how traders and investors use this price difference to trade? People use the price difference for small arbitrage between the futures and spot markets, where the larger spreads are reflected in the options markets. The spread in the options market dictates the VIX which many investors also use in their decision making process. And most importantly how the futures market affects subsequent moves in the stock market? The futures market effects the stock market where large contract holders move the entire futures price. This causes reactionary moves amongst all of the aforementioned arbitragers, who are hedged between the futures and spot markets. With the /ES this is reflected down to actual individual stocks based on their weightings in the S&P 500 index. Many of"
+          },
+          {
+            "query_id": "4700",
+            "query": "Better to get loan from finance company or bank considering the drop of credit score?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.01694915254237288,
+            "rr_gain": -0.9830508474576272,
+            "single_top_doc": "345137",
+            "paragraph_top_doc": "294327",
+            "paragraph_top_doc_score": 0.290374219417572,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 0,
+            "best_para_score": 0.290374219417572,
+            "best_para_text": "I'm not sure what raising your credit limit would do to your score in the short term. I don't think it's a clear win, though. Your percent utilization will go down (more available credit for the same amount of debt) but your available credit will also go up, which may be a negative, since potentially you can default on more debt. If you're interested in monitoring your score, Credit Karma will let you do that for free."
+          },
+          {
+            "query_id": "2385",
+            "query": "As director, can I invoice my self-owned company?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.041666666666666664,
+            "rr_gain": -0.9583333333333334,
+            "single_top_doc": "373059",
+            "paragraph_top_doc": "106807",
+            "paragraph_top_doc_score": 0.3412470817565918,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 0,
+            "best_para_score": 0.3412470817565918,
+            "best_para_text": "The Home Mill is a family-owned company with a history dating back over 20 years. With firm roots in Manchester and run by people who really care about the local community and providing the people with the best possible service, we are steadily becoming a force to be reckoned with in home furniture for the region."
+          },
+          {
+            "query_id": "5862",
+            "query": "Can I get a discount on merchandise by paying with cash instead of credit?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.07142857142857142,
+            "rr_gain": -0.9285714285714286,
+            "single_top_doc": "562511",
+            "paragraph_top_doc": "417501",
+            "paragraph_top_doc_score": 0.29976147413253784,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 1,
+            "best_para_score": 0.29976147413253784,
+            "best_para_text": "your veteran's status, your loan intentions are changeable. So when you get to the end you can ask if the price could be improved by paying cash. Or you could try putting the negotiated price on a credit card, and when they don't like that, ask for a further discount to stop you from using the credit card and paying cash."
+          },
+          {
+            "query_id": "6219",
+            "query": "Are there Investable Real Estate Indices which track Geographical Locations?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.07692307692307693,
+            "rr_gain": -0.9230769230769231,
+            "single_top_doc": "146924",
+            "paragraph_top_doc": "526270",
+            "paragraph_top_doc_score": 0.2629745304584503,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 1,
+            "best_para_score": 0.2629745304584503,
+            "best_para_text": "On the other hand, if you just bought a bunch of land in the US...that's a lot less easily-seizable and harder to immediately get ahold of for Chinese officials. There's also the more legit possibility that China quite arguably has a real estate bubble in investable real estate, and the result is that if you want to invest in land and reduce your risk to a bubble deflating, you want to do so overseas."
+          },
+          {
+            "query_id": "5264",
+            "query": "Does a company's stock price give any indication to or affect their revenue?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.1,
+            "rr_gain": -0.9,
+            "single_top_doc": "52579",
+            "paragraph_top_doc": "340730",
+            "paragraph_top_doc_score": 0.3522893786430359,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 0,
+            "best_para_score": 0.3522893786430359,
+            "best_para_text": "When your options vest, you will have the option to buy your company's stock at a particular price (the strike price). A big part of the value of the option is the difference between the price that your company's stock is trading at, and the strike price of the option. If the price of the company stock in the market is lower than the strike price of the option, they are almost worthless. I say 'almost' because there is still the possibility that the stock price could go up before the options expire. If your company is big enough that their stock is not only listed on an exchange, but there is an active options market in your company's stock, you could get a feel for what they"
+          },
+          {
+            "query_id": "10845",
+            "query": "Rationale behind using 12, 26 and 9 to calculate MACD",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.1111111111111111,
+            "rr_gain": -0.8888888888888888,
+            "single_top_doc": "191588",
+            "paragraph_top_doc": "295178",
+            "paragraph_top_doc_score": 0.3188856840133667,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 1,
+            "best_para_score": 0.3188856840133667,
+            "best_para_text": "just wanted the rationale behind a boat being a shitty investment, really."
+          },
+          {
+            "query_id": "7205",
+            "query": "Is it possible to see option prices from the past?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.125,
+            "rr_gain": -0.875,
+            "single_top_doc": "159966",
+            "paragraph_top_doc": "215596",
+            "paragraph_top_doc_score": 0.26664936542510986,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 1,
+            "best_para_score": 0.26664936542510986,
+            "best_para_text": "of the underlying to calculate the implied volatility. For future option prices, one assumes an implied volatility at a later date to calculate a possible price. For prices not at the money, the BS model is extremely imprecise. The VG model can better determine a potential future price.\""
+          },
+          {
+            "query_id": "3875",
+            "query": "Does freedom to provide services allow me contracting in Germany without paying taxes there (but in my home EU country)?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.14285714285714285,
+            "rr_gain": -0.8571428571428572,
+            "single_top_doc": "249859",
+            "paragraph_top_doc": "442110",
+            "paragraph_top_doc_score": 0.2923569977283478,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 1,
+            "best_para_score": 0.2923569977283478,
+            "best_para_text": "may be eligible for a refund for some part of that withholding. Tax treaties likely make sure that you get credit on each side for the money paid in the other. For example, as a US citizen, if I go to Europe and work and pay taxes there, I can deduct the taxes paid in Europe from my tax burden in the US. If I've already paid more to the EU than I would have paid on the same amount earned in the US, then my tax burden in the US is zero. By the same token, if I have not paid up to my US burden, then I owe the balance to the US. But this is way better than paying taxes to your home country and"
+          },
+          {
+            "query_id": "5646",
+            "query": "Do I need multiple credit monitoring services?",
+            "single_rr": 1.0,
+            "paragraph_rr": 0.16666666666666666,
+            "rr_gain": -0.8333333333333334,
+            "single_top_doc": "200972",
+            "paragraph_top_doc": "125204",
+            "paragraph_top_doc_score": 0.3363500237464905,
+            "paragraph_top_doc_is_relevant": false,
+            "best_para_id": 3,
+            "best_para_score": 0.3363500237464905,
+            "best_para_text": "if you bank or credit card have monitoring. Use CreditKarma.com or a similar if you cannot find a free service. (Please don't ever pay for credit monitoring.)"
+          }
+        ]
+      },
+      "grouped_analysis": {
+        "by_relevant_doc_length": {
+          "high": {
+            "query_count": 215.0,
+            "single_mrr": 0.14136226995164025,
+            "paragraph_mrr": 0.13935829334848795,
+            "mrr_delta": -0.0020039766031522965
+          },
+          "low": {
+            "query_count": 218.0,
+            "single_mrr": 0.18331614316264253,
+            "paragraph_mrr": 0.16270613646626872,
+            "mrr_delta": -0.020610006696373806
+          },
+          "mid": {
+            "query_count": 214.0,
+            "single_mrr": 0.19522356010520284,
+            "paragraph_mrr": 0.14814220012616147,
+            "mrr_delta": -0.047081359979041365
+          }
+        },
+        "by_relevant_doc_segment_count": {
+          "high": {
+            "query_count": 139.0,
+            "single_mrr": 0.1340378103365335,
+            "paragraph_mrr": 0.13987478246782525,
+            "mrr_delta": 0.005836972131291751
+          },
+          "low": {
+            "query_count": 332.0,
+            "single_mrr": 0.18416278942643177,
+            "paragraph_mrr": 0.15323618076496176,
+            "mrr_delta": -0.030926608661470012
+          },
+          "mid": {
+            "query_count": 176.0,
+            "single_mrr": 0.18386561014328784,
+            "paragraph_mrr": 0.15237156175894914,
+            "mrr_delta": -0.031494048384338696
+          }
+        }
+      },
+      "runtime": {
+        "stage1_seconds": 16.602211952209473,
+        "paragraph_rerank_seconds": 27876.05473613739,
+        "avg_segments_per_candidate": 1.5802067901234569,
+        "avg_scored_segments_per_query": 790.1033950617284
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+This package was modified to run in a base Python environment without torch, sentence-transformers, or the beir Python package.
+
+Main changes:
+1. BEIR loading no longer depends on beir.GenericDataLoader. The code now reads local BEIR files directly:
+   - corpus.jsonl
+   - queries.jsonl
+   - qrels/test.tsv
+2. BEIR downloading no longer depends on beir.util. The script now downloads dataset zip files with urllib and extracts them with zipfile.
+3. SentenceTransformerEncoder was disabled in this version.
+4. The paragraph hypothesis config now uses tfidf_projection instead of sentence_transformer.
+5. The BEIR sweep now uses only no-torch encoders:
+   - tfidf_projection
+   - tfidf_dense_sparse
+6. requirements.txt was simplified to avoid torch / sentence-transformers / beir.
+
+Recommended commands:
+python3 -m pip install -r requirements.txt
+bash download_experiment_data.sh ./data
+python3 run_beir_paragraph_hypothesis.py
+python3 run_beir_paragraph_sweep.py --limit 12

@@ -1,0 +1,52 @@
+Large-Scale Experiment Package Summary
+=====================================
+
+This package was created to extend the earlier optimized Cranfield project into a much larger retrieval experiment framework.
+
+What was implemented
+--------------------
+1. A large-scale segmentation x aggregation grid experiment.
+   - Multiple segmentation settings are tested.
+   - Multiple aggregation settings are tested.
+   - A single-vector stage-1 baseline is compared against paragraph-level reranking.
+   - Query-level comparison and grouped analysis are included.
+
+2. A multi-seed repeated-run experiment.
+   - The full experiment is repeated with multiple random seeds.
+   - The package reports mean, standard deviation, min, and max.
+   - This is designed to test robustness and stability.
+
+3. A BEIR transfer experiment.
+   - A selected paragraph-level setting can be transferred to several BEIR datasets.
+   - This is meant for cross-dataset validation.
+
+4. A download helper script.
+   - MS MARCO data is prepared through ir_datasets.
+   - BEIR data is downloaded through the official BEIR dataset URLs.
+   - The goal is to let the project be set up quickly on a local machine.
+
+Main experimental idea
+----------------------
+The package uses a two-stage retrieval pipeline:
+- Stage 1 retrieves a candidate set.
+- Stage 2 reranks those candidates using paragraph-level segmentation and aggregation.
+
+This makes the experiments both larger and more realistic than the original Cranfield-only version.
+
+Why the default large dataset is document-based
+-----------------------------------------------
+The original expansion idea mentioned MS MARCO passage. However, paragraph-level segmentation is much more meaningful on document-like text than on already short passages. Because of that, the code defaults to an MS MARCO document dataset identifier.
+
+What makes these experiments much heavier
+-----------------------------------------
+- larger datasets
+- larger candidate pools
+- multiple segmentation settings
+- multiple aggregation settings
+- repeated runs over many random seeds
+- per-query comparison logs and grouped analysis
+
+Expected use
+------------
+- Use the fast configs first to make sure everything works.
+- Then increase document count, query count, candidate pool size, and seed count to create runs that can naturally take hours.

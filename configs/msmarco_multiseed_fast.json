@@ -1,0 +1,4 @@
+{
+  "base_config": "configs/msmarco_grid_fast.json",
+  "seeds": [11, 22, 33, 44, 55]
+}

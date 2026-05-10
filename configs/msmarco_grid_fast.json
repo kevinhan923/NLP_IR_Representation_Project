@@ -1,0 +1,31 @@
+{
+  "data": {
+    "doc_dataset": "msmarco-document/trec-dl-2019",
+    "query_dataset": "msmarco-document/trec-dl-2019",
+    "qrels_dataset": "msmarco-document/trec-dl-2019",
+    "max_docs": 10000,
+    "max_queries": 80
+  },
+  "encoder": {
+    "name": "tfidf_projection",
+    "params": {
+      "max_features": 60000,
+      "projected_dim": 192,
+      "ngram_range": [1, 2],
+      "min_df": 2,
+      "sublinear_tf": true,
+      "stop_words": "english"
+    }
+  },
+  "experiment": {
+    "seed": 13,
+    "train_ratio": 0.6,
+    "dev_ratio": 0.2,
+    "candidate_pool": 50,
+    "fit_text_cap": 10000,
+    "segmentations": "default",
+    "aggregations": "default",
+    "metric_ks": [5, 10],
+    "stage1_max_features": 80000
+  }
+}
