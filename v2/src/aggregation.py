@@ -44,7 +44,6 @@ class LearnedMLPAggregator:
     def __init__(self, max_length: int = 512):
         self.max_length = max_length
         self.model = _MLP()
-        self._trained = False
 
     def _make_features(self, scores: np.ndarray, features: List[Dict]) -> torch.Tensor:
         n = len(scores)
@@ -68,6 +67,8 @@ class LearnedMLPAggregator:
         Train the MLP on labeled (scores, features, label) tuples.
         examples: list of {"scores": np.array, "features": [...], "label": 0|1}
         """
+        if not examples:
+            return
         optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-3)
         loss_fn = nn.BCELoss()
         self.model.train()
@@ -83,4 +84,3 @@ class LearnedMLPAggregator:
                 optimizer.step()
                 total_loss += loss.item()
         self.model.eval()
-        self._trained = True
