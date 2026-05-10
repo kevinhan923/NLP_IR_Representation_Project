@@ -19,7 +19,7 @@ class StructuralSegmenter:
             chunk = chunk.strip()
             if len(chunk) >= self.min_chars:
                 paragraphs.append({"text": chunk, "position": i, "length": len(chunk.split())})
-        return paragraphs if paragraphs else [{"text": text, "position": 0, "length": len(text.split())}]
+        return paragraphs if paragraphs else [{"text": text.strip(), "position": 0, "length": len(text.split())}]
 
 
 class SentenceWindowSegmenter:
@@ -39,7 +39,7 @@ class SentenceWindowSegmenter:
             return [{"text": text, "position": 0, "length": len(text.split())}]
         paragraphs = []
         i = 0
-        while i + self.window <= len(sentences):
+        while i < len(sentences):
             chunk = " ".join(sentences[i:i + self.window])
             paragraphs.append({"text": chunk, "position": i, "length": len(chunk.split())})
             i += self.stride

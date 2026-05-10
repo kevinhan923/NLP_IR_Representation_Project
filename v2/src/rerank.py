@@ -2,6 +2,17 @@ import numpy as np
 from typing import List, Dict
 
 
+def _aggregate(scores: np.ndarray, aggregation: str) -> float:
+    """Module-level aggregation shared by all rerankers."""
+    if aggregation == "max":
+        return float(scores.max())
+    elif aggregation == "topk_mean":
+        k = min(3, len(scores))
+        return float(np.sort(scores)[::-1][:k].mean())
+    else:
+        raise ValueError(f"Unknown aggregation '{aggregation}'. Choose 'max' or 'topk_mean'.")
+
+
 class BiEncoderReranker:
     """
     Paragraph reranker using a sentence-transformers bi-encoder.
@@ -32,19 +43,10 @@ class BiEncoderReranker:
             para_texts = [p["text"] for p in paragraphs]
             para_embs = self.model.encode(para_texts, normalize_embeddings=True)
             para_scores = para_embs @ q_emb
-            doc_score = self._aggregate(para_scores, paragraphs)
+            doc_score = _aggregate(para_scores, self.aggregation)
             scored.append({**doc, "score": float(doc_score), "para_scores": para_scores.tolist()})
         scored.sort(key=lambda x: x["score"], reverse=True)
         return scored[:top_k]
-
-    def _aggregate(self, scores: np.ndarray, paragraphs: list) -> float:
-        if self.aggregation == "max":
-            return float(scores.max())
-        elif self.aggregation == "topk_mean":
-            k = min(3, len(scores))
-            return float(np.sort(scores)[::-1][:k].mean())
-        else:
-            return float(scores.max())
 
 
 class CrossEncoderReranker:
@@ -74,7 +76,7 @@ class CrossEncoderReranker:
             paragraphs = self.segmenter.segment(doc["text"])
             pairs = [(query, p["text"]) for p in paragraphs]
             para_scores = np.array(self.model.predict(pairs))
-            doc_score = float(para_scores.max()) if self.aggregation == "max" else float(para_scores.mean())
+            doc_score = _aggregate(para_scores, self.aggregation)
             scored.append({**doc, "score": doc_score, "para_scores": para_scores.tolist()})
         scored.sort(key=lambda x: x["score"], reverse=True)
         return scored[:top_k]
