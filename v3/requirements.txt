@@ -1,0 +1,8 @@
+numpy>=1.24
+scikit-learn>=1.3
+ir_measures>=0.3
+pyyaml>=6.0
+pytest>=7.0
+# M1 (GPU) extras, not needed for M0:
+# sentence-transformers
+# faiss-cpu

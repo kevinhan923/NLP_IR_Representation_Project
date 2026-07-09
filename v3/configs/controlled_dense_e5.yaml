@@ -1,0 +1,23 @@
+# Controlled document- vs paragraph-level, strong dense encoder (E5).
+# Same n_docs/n_queries/segmentation as controlled_tfidf for direct comparison.
+name: controlled_dense_e5
+datasets: [scifact, nfcorpus, fiqa]
+data_dir: null
+n_docs: 2000
+n_queries: 200
+seed: 42
+split: test
+top_k: 100
+aggregations: [max, topk_mean]
+agg_k: 3
+
+encoder:
+  name: dense
+  model: intfloat/e5-base-v2
+  batch_size: 64
+
+segmentation:
+  mode: sentence_window
+  window: 2
+  stride: 1
+  min_words: 5

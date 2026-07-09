@@ -1,0 +1,23 @@
+# External-validity check: does fiqa's significant paragraph penalty survive a
+# much larger candidate pool (5x), i.e. is it not just a small-pool artifact?
+name: controlled_dense_e5_fiqa_large
+datasets: [fiqa]
+data_dir: null
+n_docs: 10000
+n_queries: 200
+seed: 42
+split: test
+top_k: 100
+aggregations: [max, topk_mean]
+agg_k: 3
+
+encoder:
+  name: dense
+  model: intfloat/e5-base-v2
+  batch_size: 64
+
+segmentation:
+  mode: sentence_window
+  window: 2
+  stride: 1
+  min_words: 5

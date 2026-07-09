@@ -1,0 +1,22 @@
+# Controlled document- vs paragraph-level, lightweight symmetric encoder (MiniLM).
+name: controlled_dense_minilm
+datasets: [scifact, nfcorpus, fiqa]
+data_dir: null
+n_docs: 2000
+n_queries: 200
+seed: 42
+split: test
+top_k: 100
+aggregations: [max, topk_mean]
+agg_k: 3
+
+encoder:
+  name: dense
+  model: sentence-transformers/all-MiniLM-L6-v2
+  batch_size: 64
+
+segmentation:
+  mode: sentence_window
+  window: 2
+  stride: 1
+  min_words: 5

@@ -1,0 +1,24 @@
+# Generalization check across more datasets of varying length/domain.
+# Tests whether the fiqa paragraph penalty is a general pattern, and what it
+# actually correlates with (length turned out NOT to be the driver).
+name: controlled_dense_e5_longdocs
+datasets: [scidocs, trec-covid, webis-touche2020]
+data_dir: null
+n_docs: 2000
+n_queries: 200
+seed: 42
+split: test
+top_k: 100
+aggregations: [max, topk_mean]
+agg_k: 3
+
+encoder:
+  name: dense
+  model: intfloat/e5-base-v2
+  batch_size: 64
+
+segmentation:
+  mode: sentence_window
+  window: 2
+  stride: 1
+  min_words: 5

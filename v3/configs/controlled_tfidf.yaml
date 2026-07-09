@@ -1,0 +1,24 @@
+# Controlled document- vs paragraph-level comparison (M0).
+# Document-level and paragraph-level share THIS encoder; only granularity differs.
+name: controlled_tfidf
+datasets: [scifact, nfcorpus, fiqa]
+data_dir: null          # null -> default v1/data/beir
+n_docs: 2000
+n_queries: 200
+seed: 42
+split: test
+top_k: 100
+aggregations: [max, topk_mean]
+agg_k: 3
+
+encoder:
+  name: tfidf_projection
+  r: 192                 # paper's projected dimension
+  max_features: 50000
+  seed: 42
+
+segmentation:
+  mode: sentence_window  # natural | sentence_window | token_chunk
+  window: 2
+  stride: 1
+  min_words: 5
