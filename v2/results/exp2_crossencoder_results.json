@@ -1,0 +1,30 @@
+{
+  "config": {
+    "name": "exp2_crossencoder",
+    "description": "Cross-encoder vs bi-encoder for paragraph scoring. BM25 Stage 1.",
+    "dataset": "msmarco-passage",
+    "n_docs": 5000,
+    "n_queries": 100,
+    "seed": 42,
+    "stage1_options": [
+      "bm25"
+    ],
+    "reranker": "crossencoder",
+    "reranker_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+    "segmenter": "structural",
+    "aggregation": "max",
+    "top_k_stage1": 100,
+    "top_k_stage2": 10
+  },
+  "results": {
+    "bm25": {
+      "single_mrr10": 0.8623968253968252,
+      "single_ndcg10": 0.8750015493291926,
+      "single_recall100": 0.9616666666666666,
+      "para_mrr10": 0.9583333333333333,
+      "para_ndcg10": 0.9550943758332554,
+      "para_recall100": 0.9616666666666666,
+      "delta_mrr10": 0.0959365079365081
+    }
+  }
+}
