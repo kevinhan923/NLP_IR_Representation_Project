@@ -2,26 +2,23 @@
 """
 test_data.py — Tests for v2/src/data.py
 
-The real MS MARCO and BEIR datasets require internet access and can be slow
-to download.  We patch the external calls at the import boundary so that:
-
-  * Tests always run quickly without network access.
-  * The shape contract (keys, lengths, field names) is verified on every run.
-  * A separate *integration* test marker (skipped by default) can exercise real
-    downloads when `--run-integration` is passed.
-
-Both loader functions also fall back to synthetic data automatically when
-the real dataset raises, so even without patching the shape contract holds.
+After the bug fixes:
+  * MS MARCO is still loaded via ir_datasets (mocked here for speed).
+  * BEIR is loaded from the REAL local files under v1/data/beir, returning
+    real (non-empty) qrels. Tests use the local scifact dataset when present
+    and skip otherwise.
+  * Neither loader falls back to synthetic data silently: by default a failed
+    load RAISES; synthetic data is only returned when allow_synthetic=True.
 """
 
 import pytest
 from unittest.mock import MagicMock, patch
 
-from src.data import load_msmarco_passage_sample, load_beir_sample
+from src.data import load_msmarco_passage_sample, load_beir_sample, _DEFAULT_BEIR_DIR
 
 
 # ---------------------------------------------------------------------------
-# Helpers to build fake ir_datasets / HuggingFace dataset objects
+# Helpers
 # ---------------------------------------------------------------------------
 
 def _make_fake_ir_dataset(n_docs=500, n_queries=50):
@@ -42,24 +39,15 @@ def _make_fake_ir_dataset(n_docs=500, n_queries=50):
     ds.docs_iter.return_value = iter(docs)
     ds.queries_iter.return_value = iter(queries)
     ds.qrels_iter.return_value = iter(qrels)
+    # docs_store() raising forces the docs_iter recovery path (covered code).
+    ds.docs_store.side_effect = Exception("no docs_store in mock")
     return ds
 
 
-def _make_fake_hf_dataset(n_rows, keys):
-    """Return a minimal mock of a HuggingFace Dataset."""
-    rows = [{k: f"val_{k}_{i}" for k in keys} | {"_id": str(i)} for i in range(n_rows)]
-
-    class FakeHFDataset:
-        def __init__(self, rows):
-            self._rows = rows
-
-        def __len__(self):
-            return len(self._rows)
-
-        def select(self, indices):
-            return [self._rows[i] for i in indices]
-
-    return FakeHFDataset(rows)
+_HAS_LOCAL_SCIFACT = (_DEFAULT_BEIR_DIR / "scifact" / "corpus.jsonl").exists()
+_skip_no_scifact = pytest.mark.skipif(
+    not _HAS_LOCAL_SCIFACT, reason="local BEIR scifact data not present"
+)
 
 
 # ---------------------------------------------------------------------------
@@ -71,13 +59,9 @@ def test_load_msmarco_passage_returns_correct_shapes(mock_ir):
     mock_ir.load.return_value = _make_fake_ir_dataset(n_docs=500, n_queries=50)
     data = load_msmarco_passage_sample(n_docs=50, n_queries=10, seed=42)
 
-    assert "passages" in data
-    assert "queries" in data
-    assert "qrels" in data
+    assert set(data) == {"passages", "queries", "qrels"}
     assert len(data["passages"]) == 50
     assert len(data["queries"]) == 10
-
-    # Each passage must have 'id' and 'text'
     p = data["passages"][0]
     assert "id" in p and "text" in p
 
@@ -86,97 +70,107 @@ def test_load_msmarco_passage_returns_correct_shapes(mock_ir):
 def test_load_msmarco_passage_query_shape(mock_ir):
     mock_ir.load.return_value = _make_fake_ir_dataset(n_docs=500, n_queries=50)
     data = load_msmarco_passage_sample(n_docs=50, n_queries=10, seed=42)
-
     q = data["queries"][0]
     assert "id" in q and "text" in q
 
 
 @patch("src.data.ir_datasets")
-def test_load_msmarco_passage_qrels_type(mock_ir):
+def test_load_msmarco_qrels_nonempty_and_nested(mock_ir):
     mock_ir.load.return_value = _make_fake_ir_dataset(n_docs=500, n_queries=50)
     data = load_msmarco_passage_sample(n_docs=50, n_queries=10, seed=42)
     assert isinstance(data["qrels"], dict)
-    # If qrels has entries, check the nested structure
-    if data["qrels"]:
-        inner = next(iter(data["qrels"].values()))
-        assert isinstance(inner, dict), "qrels values should be {doc_id: relevance} dicts"
+    assert data["qrels"], "qrels must not be empty"
+    inner = next(iter(data["qrels"].values()))
+    assert isinstance(inner, dict), "qrels values should be {doc_id: relevance} dicts"
+    # Every judged doc must be present in the passage pool (the original bug).
+    pool = {p["id"] for p in data["passages"]}
+    for rels in data["qrels"].values():
+        assert set(rels).issubset(pool)
 
 
 @patch("src.data.ir_datasets")
 def test_load_msmarco_reproducible(mock_ir):
-    """Same seed must produce the same result."""
+    """Same seed must produce the same passage order."""
     mock_ir.load.side_effect = [
-        _make_fake_ir_dataset(n_docs=500, n_queries=50),
         _make_fake_ir_dataset(n_docs=500, n_queries=50),
         _make_fake_ir_dataset(n_docs=500, n_queries=50),
     ]
     data1 = load_msmarco_passage_sample(n_docs=5, n_queries=3, seed=7)
     data2 = load_msmarco_passage_sample(n_docs=5, n_queries=3, seed=7)
     assert [p["id"] for p in data1["passages"]] == [p["id"] for p in data2["passages"]]
-    # Different seed → different order (statistically very likely with enough docs)
-    data3 = load_msmarco_passage_sample(n_docs=5, n_queries=3, seed=99)
-    # Not guaranteed but very likely; just assert we got valid data
-    assert len(data3["passages"]) == 5
 
 
 # ---------------------------------------------------------------------------
-# Unit tests for load_beir_sample (mocked)
+# Unit tests for load_beir_sample (real local data)
 # ---------------------------------------------------------------------------
 
-@patch("src.data.load_dataset")
-def test_load_beir_scifact_returns_correct_shapes(mock_load_dataset):
-    corpus_ds = _make_fake_hf_dataset(100, ["title", "text"])
-    queries_ds = _make_fake_hf_dataset(20, ["text"])
-    mock_load_dataset.side_effect = [corpus_ds, queries_ds]
+@_skip_no_scifact
+def test_load_beir_scifact_shapes_and_real_qrels():
+    data = load_beir_sample("scifact", n_docs=200, n_queries=5, seed=42)
 
-    data = load_beir_sample("scifact", n_docs=30, n_queries=5)
-
-    assert "passages" in data
-    assert "queries" in data
-    assert "qrels" in data
-    assert len(data["passages"]) == 30
+    assert set(data) == {"passages", "queries", "qrels"}
+    assert len(data["passages"]) == 200
     assert len(data["queries"]) == 5
 
-
-@patch("src.data.load_dataset")
-def test_load_beir_passage_has_id_and_text(mock_load_dataset):
-    corpus_ds = _make_fake_hf_dataset(100, ["title", "text"])
-    queries_ds = _make_fake_hf_dataset(20, ["text"])
-    mock_load_dataset.side_effect = [corpus_ds, queries_ds]
-
-    data = load_beir_sample("scifact", n_docs=30, n_queries=5)
     p = data["passages"][0]
     assert "id" in p and "text" in p
-
-
-@patch("src.data.load_dataset")
-def test_load_beir_query_has_id_and_text(mock_load_dataset):
-    corpus_ds = _make_fake_hf_dataset(100, ["title", "text"])
-    queries_ds = _make_fake_hf_dataset(20, ["text"])
-    mock_load_dataset.side_effect = [corpus_ds, queries_ds]
-
-    data = load_beir_sample("scifact", n_docs=30, n_queries=5)
     q = data["queries"][0]
     assert "id" in q and "text" in q
 
+    # The core bug fix: qrels must be REAL and non-empty.
+    assert data["qrels"], "BEIR qrels must not be empty (was the bug)"
+    pool = {p["id"] for p in data["passages"]}
+    for rels in data["qrels"].values():
+        assert isinstance(rels, dict)
+        assert set(rels).issubset(pool), "relevant docs must be in the passage pool"
+
+
+@_skip_no_scifact
+def test_load_beir_scifact_reproducible():
+    d1 = load_beir_sample("scifact", n_docs=100, n_queries=5, seed=13)
+    d2 = load_beir_sample("scifact", n_docs=100, n_queries=5, seed=13)
+    assert [p["id"] for p in d1["passages"]] == [p["id"] for p in d2["passages"]]
+    assert [q["id"] for q in d1["queries"]] == [q["id"] for q in d2["queries"]]
+
 
 # ---------------------------------------------------------------------------
-# Fallback / resilience tests
+# No-silent-fallback tests
 # ---------------------------------------------------------------------------
 
 @patch("src.data.ir_datasets")
-def test_msmarco_fallback_on_error(mock_ir):
-    """When ir_datasets.load raises, synthetic data must still satisfy shape."""
+def test_msmarco_raises_by_default_on_error(mock_ir):
+    """A failed real load must RAISE, not silently return synthetic data."""
     mock_ir.load.side_effect = RuntimeError("no network")
-    data = load_msmarco_passage_sample(n_docs=50, n_queries=10, seed=42)
+    with pytest.raises(RuntimeError):
+        load_msmarco_passage_sample(n_docs=50, n_queries=10, seed=42)
+
+
+@patch("src.data.ir_datasets")
+def test_msmarco_synthetic_only_when_allowed(mock_ir):
+    """Synthetic data is returned only with allow_synthetic=True."""
+    mock_ir.load.side_effect = RuntimeError("no network")
+    data = load_msmarco_passage_sample(
+        n_docs=50, n_queries=10, seed=42, allow_synthetic=True
+    )
     assert len(data["passages"]) == 50
     assert len(data["queries"]) == 10
 
 
-@patch("src.data.load_dataset")
-def test_beir_fallback_on_error(mock_load_dataset):
-    """When datasets.load_dataset raises, synthetic data must still satisfy shape."""
-    mock_load_dataset.side_effect = RuntimeError("no network")
-    data = load_beir_sample("scifact", n_docs=30, n_queries=5)
+def test_beir_raises_by_default_on_missing_data():
+    """Missing local BEIR data must RAISE by default."""
+    with pytest.raises(RuntimeError):
+        load_beir_sample(
+            "does_not_exist", n_docs=30, n_queries=5, data_dir="/no/such/dir"
+        )
+
+
+def test_beir_synthetic_only_when_allowed():
+    data = load_beir_sample(
+        "does_not_exist",
+        n_docs=30,
+        n_queries=5,
+        data_dir="/no/such/dir",
+        allow_synthetic=True,
+    )
     assert len(data["passages"]) == 30
     assert len(data["queries"]) == 5
