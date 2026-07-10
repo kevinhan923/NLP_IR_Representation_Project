@@ -50,6 +50,11 @@ class ExperimentConfig:
     encoder: EncoderConfig
     segmentation: SegmentationConfig
     data_dir: Optional[str] = None  # None -> default v1/data/beir
+    # Optional INDEPENDENT encoder for the M2 locality metric. When set,
+    # locality features are additionally computed with this encoder so the
+    # locality-vs-delta correlation cannot be dismissed as mechanical reuse
+    # of the same similarity scores that produced the delta.
+    locality_encoder: Optional[EncoderConfig] = None
 
     def __post_init__(self) -> None:
         if not self.datasets:
@@ -69,4 +74,6 @@ def load_config(path: str | Path) -> ExperimentConfig:
     raw = yaml.safe_load(Path(path).read_text(encoding="utf-8")) or {}
     enc = EncoderConfig(**(raw.pop("encoder", {}) or {}))
     seg = SegmentationConfig(**(raw.pop("segmentation", {}) or {}))
-    return ExperimentConfig(encoder=enc, segmentation=seg, **raw)
+    loc_raw = raw.pop("locality_encoder", None)
+    loc = EncoderConfig(**loc_raw) if loc_raw else None
+    return ExperimentConfig(encoder=enc, segmentation=seg, locality_encoder=loc, **raw)

@@ -127,6 +127,12 @@ segmentation: {mode: sentence_window, window: 2, stride: 1}
     p.write_text(yaml_text)
     cfg = load_config(p)
     assert cfg.datasets == ["scifact"] and cfg.encoder.r == 64
+    assert cfg.locality_encoder is None  # optional field defaults to absent
+
+    with_loc = tmp_path / "loc.yaml"
+    with_loc.write_text(yaml_text + "\nlocality_encoder: {name: tfidf_projection, r: 32}\n")
+    cfg2 = load_config(with_loc)
+    assert cfg2.locality_encoder is not None and cfg2.locality_encoder.r == 32
 
     bad = tmp_path / "bad.yaml"
     bad.write_text(yaml_text.replace("n_docs: 100", "n_docs: 0"))
