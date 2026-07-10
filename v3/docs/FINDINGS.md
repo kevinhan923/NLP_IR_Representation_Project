@@ -85,6 +85,52 @@ contrasts are fiqa/scidocs (sig. negative) vs scifact/nfcorpus (mid-difficulty, 
 > track document length. The pattern reproduces across E5 and BGE and passes paired
 > significance testing. M2 will quantify the true driver (evidence locality).
 
+## M2: evidence locality predicts the per-query granularity delta (2026-07-10)
+
+> Setup: same pools/seed as M1 (aggregates reproduce M1 exactly — built-in sanity
+> check passed). For every judged query, locality features are computed from the
+> query-vs-segment similarity distribution of its relevant docs (E5, same as
+> retrieval) AND independently with MiniLM (`x_` features) to rule out mechanical
+> same-encoder correlation. Analysis on n_segments_min ≥ 2 rows (every rel doc
+> actually splits), within-dataset (dataset-demeaned) correlations only.
+> Code: `src/locality.py`, `scripts/run_locality.py`, `scripts/analyze_locality.py`;
+> data: `results/locality_e5.json` (per-query rows included).
+
+**Protocol against feature-shopping**: winner selected on the three original
+datasets only (scifact/nfcorpus/fiqa, n=541), then ONE confirmatory test on the
+held-out datasets; full family reported with Holm correction as supplement.
+
+- **Winner: `max_minus_mean`** — how far the best segment stands above the doc's
+  mean segment similarity (raw cosine gap). Selection: ρ=+0.248, p=4.7e-9.
+- **Held-out confirmation (scidocs)**: ρ=+0.168, p=0.054 — directionally
+  consistent, marginal (n=132; trec-covid/touche unusable: 2/9 rows survive the
+  multiseg filter). Honest reading: replicates in direction, needs more data for
+  a clean p<0.05.
+- **Direction as hypothesized**: LOW gap (flat distribution = holistic relevance)
+  → paragraph penalty; HIGH gap (one segment stands out = local evidence) →
+  paragraph-safe. Quartile-binned demeaned Δ: bottom −0.091 vs top +0.108
+  (~0.2 RR@10 swing), middle quartiles noisy (not a clean dose-response).
+- **Not mechanical**: the independent-encoder versions stay significant —
+  `x_max_minus_mean` ρ=+0.136 (p=3.8e-4, Holm 4.9e-3), `x_peakedness` ρ=+0.109
+  (Holm 0.046). Since under agg=max the same-encoder max IS the paragraph score,
+  **cite the `x_` numbers as the headline** to preempt the circularity objection.
+- **Holm-surviving family** (within-dataset, n=684): max_minus_mean, peakedness,
+  and both `x_` counterparts. **Failed candidates**: entropy_locality (ρ=−0.03!),
+  gini, top1_share — the z-softmax entropy is too coarse and n-dependent; the
+  plan's original "熵/基尼" operationalization is refuted, the simple raw-gap
+  family wins.
+- **Length/segment-count again not the driver**: doc_words and n_segments have
+  significant Pearson but n.s. Spearman (rank-fragile) and lose to the winner.
+
+⚠️ **Open puzzle for the paper**: dataset-level MEAN locality does NOT order the
+dataset-level penalties (fiqa has the *highest* mean gap of the selection set yet
+the biggest penalty). The metric predicts *which queries within a dataset* get
+hurt, but the cross-dataset mechanism (why fiqa/scidocs as a whole) is NOT just
+"lower average locality". Candidate explanations: distractor-side effects (a
+flat rel-doc distribution hurts only when competing docs have peaked ones), or
+qrels character. Do not claim "holistic datasets have lower mean locality" — the
+data contradicts it; claim per-query predictive power.
+
 ## Limitations / open items
 
 - **Small-pool caveat — CONFIRMED ROBUST (2026-06-29)**: n_docs=2000 does inflate
@@ -106,3 +152,9 @@ contrasts are fiqa/scidocs (sig. negative) vs scifact/nfcorpus (mid-difficulty, 
 - 2026-06-29: +3 datasets (E5): scidocs sig. negative (Δ=−0.084, p<0.001) like
   fiqa; trec-covid & touche no diff (but ceiling-limited). Length disproven as
   driver; "holistic vs local relevance" is the candidate driver → M2.
+- 2026-07-10: M2 DONE (E5 + independent MiniLM check, 6 datasets). Winner
+  `max_minus_mean` selected on original 3 datasets (ρ=+0.25, p=5e-9), held-out
+  scidocs confirms directionally (ρ=+0.17, p=0.054); cross-encoder `x_` versions
+  survive Holm — correlation not mechanical. Entropy/gini candidates refuted.
+  Dataset-level mean locality does NOT explain which datasets get penalized
+  (per-query signal only) → open question for M3/paper framing.

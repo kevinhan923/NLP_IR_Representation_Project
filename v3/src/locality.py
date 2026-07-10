@@ -192,6 +192,30 @@ def correlate(x: Sequence[float], y: Sequence[float]) -> Dict[str, Optional[floa
     return out
 
 
+def feature_correlations(rows: Sequence[Dict], delta_key: str, keys: Sequence[str]) -> Dict[str, Dict]:
+    """{feature: correlation-dict} of each feature against the per-query delta."""
+    deltas = [r[delta_key] for r in rows]
+    return {k: correlate([r[k] for r in rows], deltas) for k in keys}
+
+
+def demean_by_dataset(rows: Sequence[Dict], key: str) -> List[float]:
+    """Subtract the per-dataset mean — the within-dataset (fixed-effects) view."""
+    sums: Dict[str, float] = {}
+    counts: Dict[str, int] = {}
+    for r in rows:
+        sums[r["dataset"]] = sums.get(r["dataset"], 0.0) + r[key]
+        counts[r["dataset"]] = counts.get(r["dataset"], 0) + 1
+    means = {ds: sums[ds] / counts[ds] for ds in sums}
+    return [r[key] - means[r["dataset"]] for r in rows]
+
+
+def within_correlations(rows: Sequence[Dict], delta_key: str, keys: Sequence[str]) -> Dict[str, Dict]:
+    """Dataset-demeaned correlations: immune to cross-dataset composition
+    (a pooled correlation could otherwise be pure Simpson's paradox)."""
+    deltas = demean_by_dataset(rows, delta_key)
+    return {k: correlate(demean_by_dataset(rows, k), deltas) for k in keys}
+
+
 def binned_means(
     x: Sequence[float], y: Sequence[float], n_bins: int = 4
 ) -> List[Dict[str, float]]:

@@ -43,7 +43,13 @@ from ir_measures import RR
 from src.config import load_config
 from src.data import load_beir_sample
 from src.encoders import build_encoder
-from src.locality import FEATURE_KEYS, binned_means, correlate, query_locality
+from src.locality import (
+    FEATURE_KEYS,
+    binned_means,
+    feature_correlations,
+    query_locality,
+    within_correlations,
+)
 from src.metrics import evaluate, per_query
 from src.retrieval import DocumentLevelRetriever, ParagraphLevelRetriever
 from src.segmentation import build_segmenter
@@ -61,26 +67,8 @@ def _run_dict(retriever, queries, top_k):
     }
 
 
-def _feature_table(rows, delta_key, keys):
-    """{feature: correlation-dict} against the chosen per-query delta."""
-    deltas = [r[delta_key] for r in rows]
-    return {k: correlate([r[k] for r in rows], deltas) for k in keys}
-
-
-def _demean_by_dataset(rows, key):
-    """Subtract the per-dataset mean — the within-dataset (fixed-effects) view."""
-    sums, counts = {}, {}
-    for r in rows:
-        sums[r["dataset"]] = sums.get(r["dataset"], 0.0) + r[key]
-        counts[r["dataset"]] = counts.get(r["dataset"], 0) + 1
-    means = {ds: sums[ds] / counts[ds] for ds in sums}
-    return [r[key] - means[r["dataset"]] for r in rows]
-
-
-def _within_table(rows, delta_key, keys):
-    """Dataset-demeaned correlations: immune to cross-dataset composition."""
-    deltas = _demean_by_dataset(rows, delta_key)
-    return {k: correlate(_demean_by_dataset(rows, k), deltas) for k in keys}
+_feature_table = feature_correlations
+_within_table = within_correlations
 
 
 def run(config_path: str) -> None:
