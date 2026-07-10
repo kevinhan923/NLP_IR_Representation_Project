@@ -189,6 +189,12 @@ def run(config_path: str) -> None:
                 "vs_document": _sig_block(pqs["document"], pqs[name], cfg.seed),
                 "vs_paragraph": _sig_block(pqs["paragraph"], pqs[name], cfg.seed),
             }
+            if name != "global_alpha":
+                # The decisive comparison for the "adaptive" claim: does the
+                # per-query router beat one static fusion weight?
+                sig[name]["vs_global_alpha"] = _sig_block(
+                    pqs["global_alpha"], pqs[name], cfg.seed
+                )
         per_dataset_out[dataset] = {
             "n_test": len(st["test"]),
             "metrics": metrics,
@@ -213,6 +219,10 @@ def run(config_path: str) -> None:
             "vs_document": _sig_block(pooled_pqs["document"], pooled_pqs[name], cfg.seed),
             "vs_paragraph": _sig_block(pooled_pqs["paragraph"], pooled_pqs[name], cfg.seed),
         }
+        if name != "global_alpha":
+            pooled_sig[name]["vs_global_alpha"] = _sig_block(
+                pooled_pqs["global_alpha"], pooled_pqs[name], cfg.seed
+            )
     pooled_means = {name: float(np.mean(list(pq.values()))) for name, pq in pooled_pqs.items()}
 
     print(f"\n=== pooled test ({len(pooled_pqs['document'])} queries) ===")
@@ -222,6 +232,9 @@ def run(config_path: str) -> None:
             d, p = pooled_sig[name]["vs_document"], pooled_sig[name]["vs_paragraph"]
             line += (f"  vs_doc Δ={d['mean_diff']:+.4f} (p={d['p_value']:.4f})"
                      f"  vs_par Δ={p['mean_diff']:+.4f} (p={p['p_value']:.4f})")
+            g = pooled_sig[name].get("vs_global_alpha")
+            if g:
+                line += f"  vs_glob Δ={g['mean_diff']:+.4f} (p={g['p_value']:.4f})"
         print(line, flush=True)
 
     coefs = router.model.named_steps["ridge"].coef_
@@ -240,6 +253,9 @@ def run(config_path: str) -> None:
             "mean_ndcg10": pooled_means,
             "significance_ndcg10": pooled_sig,
         },
+        # Per-query nDCG@10 for every system ("<dataset>::<qid>" keys) so paper
+        # plots and extra significance tests never require re-running retrieval.
+        "per_query_ndcg10": pooled_pqs,
     }
     results_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results")
     os.makedirs(results_dir, exist_ok=True)

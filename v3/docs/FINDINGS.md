@@ -131,6 +131,48 @@ flat rel-doc distribution hurts only when competing docs have peaked ones), or
 qrels character. Do not claim "holistic datasets have lower mean locality" — the
 data contradicts it; claim per-query predictive power.
 
+## M3: adaptive granularity (2026-07-11)
+
+> Setup: E5, same pools/seed as M1/M2 (fixed-baseline numbers reproduce M1
+> bit-for-bit). Per-dataset 50/50 query split; ONE ridge router and ONE global
+> fusion weight fit on the pooled 449 train queries (features: candidate-side
+> peakedness = M2's signal applied to top-10 doc-level candidates, side margins,
+> rank agreement, query length — computable at query time, no qrels). Evaluation
+> on 447 held-out test queries, paired sign-flip significance on nDCG@10.
+> Code: `src/adaptive.py`, `scripts/run_adaptive.py`; results:
+> `results/adaptive_e5.json` (per-query nDCG for all systems included).
+
+**Gate 3 verdict — PASSED, with an honest asterisk.** Pooled test (n=447):
+
+| system | nDCG@10 | vs document | vs paragraph | vs global fusion |
+|---|---|---|---|---|
+| document (fixed) | 0.5865 | — | +0.0178* | |
+| paragraph (fixed) | 0.5687 | −0.0178* | — | |
+| global-α fusion (α=0.55) | 0.6014 | **+0.0150 (p=.005)** | **+0.0327 (p<1e-4)** | — |
+| router_soft | **0.6042** | **+0.0178 (p=.0003)** | **+0.0355 (p<1e-4)** | +0.0028 (p=.28) |
+| oracle (upper bound) | 0.6299 | +0.0435 (p<1e-4) | +0.0612 (p<1e-4) | **+0.0285 (p<1e-4)** |
+
+1. **Granularity complementarity is real and exploitable (the headline).** Even
+   ONE static fusion weight significantly beats BOTH fixed granularities pooled;
+   router_soft does too, with slightly larger margins. This satisfies the plan's
+   Gate 3 criterion (同时 ≥ 两个固定粒度, 显著).
+2. **"Adaptive beats static fusion" is NOT established** (+0.0028, p=0.28). Do
+   not claim it. The oracle's +0.0285 (p<1e-4) over static fusion shows the
+   per-query headroom exists — the current 8-feature router captures ~10% of it.
+   Better routers/features are the obvious future-work lever.
+3. **Where routing DOES add value: worst-case robustness.** Static fusion loses
+   significantly to the document side on scidocs (−0.019, p=0.026); both router
+   variants remove that significant loss (router_hard −0.001 p=1.0). On touche
+   it shrinks the loss vs paragraph (−0.051 sig → −0.038). Frame the router as
+   insurance against fusion's per-dataset failure modes, not as a mean-lift.
+4. Per-dataset router_soft: significantly better than document on scifact and
+   nfcorpus, than paragraph on fiqa/scidocs; never significantly below BOTH
+   fixed sides anywhere; weakest spots: touche vs paragraph (−0.038, p=0.03,
+   n=24) and scidocs vs document (−0.010, n.s.).
+5. **Cost note for the paper**: fusion/routing requires running both systems
+   (2× index + 2× query encode); the router itself is negligible (ridge on 8
+   features). Oracle-vs-fusion headroom may justify the cost story.
+
 ## Limitations / open items
 
 - **Small-pool caveat — CONFIRMED ROBUST (2026-06-29)**: n_docs=2000 does inflate
@@ -158,3 +200,8 @@ data contradicts it; claim per-query predictive power.
   survive Holm — correlation not mechanical. Entropy/gini candidates refuted.
   Dataset-level mean locality does NOT explain which datasets get penalized
   (per-query signal only) → open question for M3/paper framing.
+- 2026-07-11: M3 DONE (E5, 6 datasets, pooled router). Gate 3 passed: fusion and
+  router_soft both significantly beat the two fixed granularities pooled
+  (router_soft +0.018/+0.036, p≤3e-4). Router does NOT significantly beat static
+  fusion (+0.003, p=0.28) but removes fusion's significant scidocs failure;
+  oracle shows +0.029 (p<1e-4) headroom above fusion for better routers.
