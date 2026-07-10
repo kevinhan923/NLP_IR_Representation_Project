@@ -37,6 +37,22 @@ class SegmentationConfig:
 
 
 @dataclass(frozen=True)
+class AdaptiveConfig:
+    """M3 settings: router features, query split, and model hyperparameters."""
+    feature_top_k: int = 10    # doc-level candidates used for router features
+    test_ratio: float = 0.5    # per-dataset query holdout for evaluation
+    split_seed: int = 7        # shuffle seed for the train/test query split
+    ridge_alpha: float = 1.0   # router regularization
+    soft_tau: float = 0.05     # logistic temperature for soft per-query alpha
+
+    def __post_init__(self) -> None:
+        if not (0.0 < self.test_ratio < 1.0):
+            raise ValueError("adaptive.test_ratio must be in (0, 1)")
+        if self.feature_top_k <= 0:
+            raise ValueError("adaptive.feature_top_k must be > 0")
+
+
+@dataclass(frozen=True)
 class ExperimentConfig:
     name: str
     datasets: List[str]
@@ -55,6 +71,8 @@ class ExperimentConfig:
     # locality-vs-delta correlation cannot be dismissed as mechanical reuse
     # of the same similarity scores that produced the delta.
     locality_encoder: Optional[EncoderConfig] = None
+    # Optional M3 block; defaults apply when the YAML has an empty `adaptive:`.
+    adaptive: Optional[AdaptiveConfig] = None
 
     def __post_init__(self) -> None:
         if not self.datasets:
@@ -76,4 +94,9 @@ def load_config(path: str | Path) -> ExperimentConfig:
     seg = SegmentationConfig(**(raw.pop("segmentation", {}) or {}))
     loc_raw = raw.pop("locality_encoder", None)
     loc = EncoderConfig(**loc_raw) if loc_raw else None
-    return ExperimentConfig(encoder=enc, segmentation=seg, locality_encoder=loc, **raw)
+    has_adaptive = "adaptive" in raw
+    ada_raw = raw.pop("adaptive", None)
+    ada = AdaptiveConfig(**(ada_raw or {})) if has_adaptive else None
+    return ExperimentConfig(
+        encoder=enc, segmentation=seg, locality_encoder=loc, adaptive=ada, **raw
+    )

@@ -95,3 +95,15 @@ class ParagraphLevelRetriever:
             scored.append((doc_id, score))
         scored.sort(key=lambda x: x[1], reverse=True)
         return scored[:top_k]
+
+    def doc_segment_sims(self, query: str, doc_ids: List[str]) -> Dict[str, np.ndarray]:
+        """Per-document query-vs-segment similarity vectors (M3 router features).
+
+        Query-time computable — no qrels involved. One extra full segment-matrix
+        pass per call, same cost as one retrieve().
+        """
+        if self._seg_matrix is None:
+            raise RuntimeError("Call index() before doc_segment_sims().")
+        q = self.encoder.encode([query], is_query=True)[0]
+        seg_scores = self._seg_matrix @ q
+        return {d: seg_scores[self._doc_seg_idx[d]] for d in doc_ids}

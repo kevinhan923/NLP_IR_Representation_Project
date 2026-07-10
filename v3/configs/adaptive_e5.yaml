@@ -1,0 +1,32 @@
+# M3: adaptive granularity (router / fusion) vs fixed document/paragraph, E5.
+# Same pools/seed as M1/M2 so the fixed-granularity aggregates line up with
+# earlier runs. Router is trained on pooled train queries across all datasets
+# (one model, cross-domain) and evaluated on held-out test queries.
+name: adaptive_e5
+datasets: [scifact, nfcorpus, fiqa, scidocs, trec-covid, webis-touche2020]
+data_dir: null
+n_docs: 2000
+n_queries: 200
+seed: 42
+split: test
+top_k: 100
+aggregations: [max]
+agg_k: 3
+
+encoder:
+  name: dense
+  model: intfloat/e5-base-v2
+  batch_size: 64
+
+segmentation:
+  mode: sentence_window
+  window: 2
+  stride: 1
+  min_words: 5
+
+adaptive:
+  feature_top_k: 10
+  test_ratio: 0.5
+  split_seed: 7
+  ridge_alpha: 1.0
+  soft_tau: 0.05
