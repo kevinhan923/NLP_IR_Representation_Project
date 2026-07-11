@@ -71,8 +71,14 @@ _feature_table = feature_correlations
 _within_table = within_correlations
 
 
-def run(config_path: str) -> None:
+def run(config_path: str, seed_override: int | None = None) -> None:
     cfg = load_config(config_path)
+    if seed_override is not None:
+        # Multi-seed stability runs: new sampling seed, suffixed output name.
+        import dataclasses
+        cfg = dataclasses.replace(
+            cfg, seed=seed_override, name=f"{cfg.name}_seed{seed_override}"
+        )
     primary_agg = cfg.aggregations[0]
     delta_key = f"delta_{primary_agg}"
 
@@ -240,5 +246,7 @@ def run(config_path: str) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", required=True)
+    parser.add_argument("--seed", type=int, default=None,
+                        help="override cfg.seed; output name gets a _seed<N> suffix")
     args = parser.parse_args()
-    run(args.config)
+    run(args.config, seed_override=args.seed)

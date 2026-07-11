@@ -36,6 +36,7 @@ from src.adaptive import (
     fuse_runs,
     oracle_per_query,
     query_features,
+    rrf_fuse_runs,
     tune_global_alpha,
 )
 from src.config import AdaptiveConfig, load_config
@@ -69,8 +70,14 @@ def _sig_block(base_pq, sys_pq, seed):
     return {**sig, **ci}
 
 
-def run(config_path: str) -> None:
+def run(config_path: str, seed_override: int | None = None) -> None:
     cfg = load_config(config_path)
+    if seed_override is not None:
+        # Multi-seed stability runs: new sampling seed, suffixed output name.
+        import dataclasses
+        cfg = dataclasses.replace(
+            cfg, seed=seed_override, name=f"{cfg.name}_seed{seed_override}"
+        )
     ada = cfg.adaptive or AdaptiveConfig()
     agg = cfg.aggregations[0]
 
@@ -158,9 +165,11 @@ def run(config_path: str) -> None:
         soft = dict(zip(qid_order, router.soft_alphas(rows, tau=ada.soft_tau)))
         glob = {q: global_alpha for q in qid_order}
 
+        rrf_all = rrf_fuse_runs(st["doc_run"], st["par_run"])
         systems = {
             "document": doc_run,
             "paragraph": par_run,
+            "rrf": {q: rrf_all[q] for q in test if q in rrf_all},
             "global_alpha": fuse_runs(st["doc_run"], st["par_run"], glob),
             "router_hard": fuse_runs(st["doc_run"], st["par_run"], hard),
             "router_soft": fuse_runs(st["doc_run"], st["par_run"], soft),
@@ -184,17 +193,18 @@ def run(config_path: str) -> None:
         routing_stats[dataset] = {"n_test": len(hard), "routed_to_paragraph": n_para}
 
         sig = {}
-        for name in ("global_alpha", "router_hard", "router_soft", "oracle"):
+        for name in ("rrf", "global_alpha", "router_hard", "router_soft", "oracle"):
             sig[name] = {
                 "vs_document": _sig_block(pqs["document"], pqs[name], cfg.seed),
                 "vs_paragraph": _sig_block(pqs["paragraph"], pqs[name], cfg.seed),
             }
-            if name != "global_alpha":
-                # The decisive comparison for the "adaptive" claim: does the
-                # per-query router beat one static fusion weight?
+            if name not in ("rrf", "global_alpha"):
+                # The decisive comparisons for the "adaptive" claim: does the
+                # per-query router beat the static fusions (tuned and RRF)?
                 sig[name]["vs_global_alpha"] = _sig_block(
                     pqs["global_alpha"], pqs[name], cfg.seed
                 )
+                sig[name]["vs_rrf"] = _sig_block(pqs["rrf"], pqs[name], cfg.seed)
         per_dataset_out[dataset] = {
             "n_test": len(st["test"]),
             "metrics": metrics,
@@ -203,7 +213,7 @@ def run(config_path: str) -> None:
         }
 
         print(f"\n=== {dataset} (test n={len(st['test'])}) ===")
-        for name in ("document", "paragraph", "global_alpha", "router_hard", "router_soft", "oracle"):
+        for name in ("document", "paragraph", "rrf", "global_alpha", "router_hard", "router_soft", "oracle"):
             nd = metrics[name].get("nDCG@10", float("nan"))
             line = f"  {name:>13}: nDCG@10={nd:.4f}"
             if name in sig:
@@ -214,19 +224,22 @@ def run(config_path: str) -> None:
 
     # ---- pooled test analysis -------------------------------------------------
     pooled_sig = {}
-    for name in ("global_alpha", "router_hard", "router_soft", "oracle"):
+    for name in ("rrf", "global_alpha", "router_hard", "router_soft", "oracle"):
         pooled_sig[name] = {
             "vs_document": _sig_block(pooled_pqs["document"], pooled_pqs[name], cfg.seed),
             "vs_paragraph": _sig_block(pooled_pqs["paragraph"], pooled_pqs[name], cfg.seed),
         }
-        if name != "global_alpha":
+        if name not in ("rrf", "global_alpha"):
             pooled_sig[name]["vs_global_alpha"] = _sig_block(
                 pooled_pqs["global_alpha"], pooled_pqs[name], cfg.seed
+            )
+            pooled_sig[name]["vs_rrf"] = _sig_block(
+                pooled_pqs["rrf"], pooled_pqs[name], cfg.seed
             )
     pooled_means = {name: float(np.mean(list(pq.values()))) for name, pq in pooled_pqs.items()}
 
     print(f"\n=== pooled test ({len(pooled_pqs['document'])} queries) ===")
-    for name in ("document", "paragraph", "global_alpha", "router_hard", "router_soft", "oracle"):
+    for name in ("document", "paragraph", "rrf", "global_alpha", "router_hard", "router_soft", "oracle"):
         line = f"  {name:>13}: mean nDCG@10={pooled_means[name]:.4f}"
         if name in pooled_sig:
             d, p = pooled_sig[name]["vs_document"], pooled_sig[name]["vs_paragraph"]
@@ -235,6 +248,9 @@ def run(config_path: str) -> None:
             g = pooled_sig[name].get("vs_global_alpha")
             if g:
                 line += f"  vs_glob Δ={g['mean_diff']:+.4f} (p={g['p_value']:.4f})"
+            r = pooled_sig[name].get("vs_rrf")
+            if r:
+                line += f"  vs_rrf Δ={r['mean_diff']:+.4f} (p={r['p_value']:.4f})"
         print(line, flush=True)
 
     coefs = router.model.named_steps["ridge"].coef_
@@ -268,5 +284,7 @@ def run(config_path: str) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", required=True)
+    parser.add_argument("--seed", type=int, default=None,
+                        help="override cfg.seed; output name gets a _seed<N> suffix")
     args = parser.parse_args()
-    run(args.config)
+    run(args.config, seed_override=args.seed)

@@ -96,6 +96,34 @@ def fuse_runs(doc_run: Run, par_run: Run, alpha_by_qid: Dict[str, float]) -> Run
     }
 
 
+def rrf_fuse_query(
+    doc_scores: Dict[str, float],
+    par_scores: Dict[str, float],
+    k: int = 60,
+) -> Dict[str, float]:
+    """Reciprocal Rank Fusion of one query's two candidate lists.
+
+    The standard parameter-free fusion baseline (Cormack et al. 2009):
+    score(d) = sum over sides of 1 / (k + rank_side(d)), rank starting at 1.
+    A document absent from one side simply gets no contribution from it. Any
+    learned fusion/router must beat this to justify its extra machinery.
+    """
+    fused: Dict[str, float] = {}
+    for scores in (doc_scores, par_scores):
+        ranked = sorted(scores.items(), key=lambda kv: -kv[1])
+        for rank, (doc_id, _) in enumerate(ranked, start=1):
+            fused[doc_id] = fused.get(doc_id, 0.0) + 1.0 / (k + rank)
+    return fused
+
+
+def rrf_fuse_runs(doc_run: Run, par_run: Run, k: int = 60) -> Run:
+    """RRF over all queries present in either run."""
+    return {
+        qid: rrf_fuse_query(doc_run.get(qid, {}), par_run.get(qid, {}), k=k)
+        for qid in set(doc_run) | set(par_run)
+    }
+
+
 # --------------------------------------------------------------------------- #
 # query-time features
 # --------------------------------------------------------------------------- #

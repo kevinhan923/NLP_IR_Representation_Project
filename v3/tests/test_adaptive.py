@@ -179,3 +179,40 @@ def test_doc_segment_sims_matches_manual_computation():
     q = ret.encoder.encode(["volcano magma lava"], is_query=True)[0]
     manual = ret.encoder.encode(seg(passages[0]["text"])) @ q
     assert np.allclose(sims["d1"], manual)
+
+
+# --------------------------------------------------------------------------- #
+# RRF baseline
+# --------------------------------------------------------------------------- #
+
+from src.adaptive import rrf_fuse_query, rrf_fuse_runs
+
+
+def test_rrf_agreement_preserves_ranking():
+    """When both sides rank identically, RRF must reproduce that ranking."""
+    doc = {"a": 0.9, "b": 0.5, "c": 0.1}
+    par = {"a": 3.0, "b": 2.0, "c": 1.0}
+    fused = rrf_fuse_query(doc, par, k=60)
+    ranked = sorted(fused, key=lambda d: -fused[d])
+    assert ranked == ["a", "b", "c"]
+    # exact values: rank r on both sides -> 2/(60+r)
+    assert fused["a"] == pytest.approx(2 / 61)
+    assert fused["c"] == pytest.approx(2 / 63)
+
+
+def test_rrf_rewards_presence_on_both_sides():
+    """A doc ranked mid on both sides beats a doc top on one side only."""
+    doc = {"both": 0.5, "doc_only": 0.9}
+    par = {"both": 0.5, "par_only": 0.9}
+    fused = rrf_fuse_query(doc, par, k=60)
+    # both: rank 2 + rank 2 = 2/62; single-side tops: 1/61
+    assert fused["both"] == pytest.approx(2 / 62)
+    assert fused["both"] > fused["doc_only"] == pytest.approx(1 / 61)
+
+
+def test_rrf_fuse_runs_covers_union_of_queries():
+    doc_run = {"q1": {"a": 1.0}, "q2": {"b": 1.0}}
+    par_run = {"q2": {"c": 1.0}, "q3": {"d": 1.0}}
+    fused = rrf_fuse_runs(doc_run, par_run)
+    assert set(fused) == {"q1", "q2", "q3"}
+    assert set(fused["q2"]) == {"b", "c"}
