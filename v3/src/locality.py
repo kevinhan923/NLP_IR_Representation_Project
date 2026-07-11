@@ -137,13 +137,36 @@ def query_locality(
         raise ValueError("query_locality requires at least one relevant doc")
 
     q_vec = encoder.encode([query], is_query=True)[0]
-    per_doc: List[Dict[str, float]] = []
+    sims_list: List[np.ndarray] = []
+    words: List[float] = []
     for text in rel_doc_texts:
         segs = segmenter(text) or [text]
-        seg_vecs = encoder.encode(segs)
-        sims = seg_vecs @ q_vec
-        feats = locality_features(sims)
-        feats["doc_words"] = float(len(text.split()))
+        sims_list.append(encoder.encode(segs) @ q_vec)
+        words.append(float(len(text.split())))
+    return query_locality_from_sims(sims_list, words)
+
+
+def query_locality_from_sims(
+    sims_per_doc: Sequence[np.ndarray],
+    doc_words: Sequence[float],
+) -> Dict[str, float]:
+    """Same aggregation as query_locality, from PRECOMPUTED per-doc sims.
+
+    This is the fast path for experiment scripts: segment embeddings are
+    encoded once per collection (they already exist inside the paragraph
+    retriever), so per-query locality is one matmul + slicing instead of one
+    encoder call per relevant document (which made dense-qrels datasets like
+    trec-covid pathologically slow).
+    """
+    if not sims_per_doc:
+        raise ValueError("query_locality_from_sims requires at least one doc")
+    if len(sims_per_doc) != len(doc_words):
+        raise ValueError("sims_per_doc and doc_words must be equal-length")
+
+    per_doc: List[Dict[str, float]] = []
+    for sims, words in zip(sims_per_doc, doc_words):
+        feats = locality_features(np.asarray(sims))
+        feats["doc_words"] = float(words)
         per_doc.append(feats)
 
     keys = list(per_doc[0].keys())

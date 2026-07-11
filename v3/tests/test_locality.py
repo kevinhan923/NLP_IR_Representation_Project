@@ -197,3 +197,34 @@ def test_query_locality_n_segments_min_flags_unsplittable_docs():
 def test_query_locality_requires_relevant_docs():
     with pytest.raises(ValueError):
         query_locality("q", [], _FakeBowEncoder(), _sentence_segmenter)
+
+
+def test_query_locality_from_sims_equivalent_to_encode_path():
+    """The fast precomputed-sims path must reproduce query_locality exactly."""
+    from src.locality import query_locality_from_sims
+
+    enc = _FakeBowEncoder()
+    query = "volcano magma lava"
+    docs = [
+        "volcano magma lava rock. cat cat sky. dog tree sky.",
+        "volcano magma cat. lava volcano sky. magma lava tree.",
+    ]
+    slow = query_locality(query, docs, enc, _sentence_segmenter)
+
+    q_vec = enc.encode([query], is_query=True)[0]
+    sims = [enc.encode(_sentence_segmenter(t)) @ q_vec for t in docs]
+    words = [float(len(t.split())) for t in docs]
+    fast = query_locality_from_sims(sims, words)
+
+    assert set(slow) == set(fast)
+    for k in slow:
+        assert slow[k] == pytest.approx(fast[k], abs=1e-9), k
+
+
+def test_query_locality_from_sims_validation():
+    from src.locality import query_locality_from_sims
+
+    with pytest.raises(ValueError):
+        query_locality_from_sims([], [])
+    with pytest.raises(ValueError):
+        query_locality_from_sims([np.array([0.5])], [10.0, 20.0])

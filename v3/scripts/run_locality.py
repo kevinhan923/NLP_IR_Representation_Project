@@ -47,7 +47,7 @@ from src.locality import (
     FEATURE_KEYS,
     binned_means,
     feature_correlations,
-    query_locality,
+    query_locality_from_sims,
     within_correlations,
 )
 from src.metrics import evaluate, per_query
@@ -115,17 +115,37 @@ def run(config_path: str, seed_override: int | None = None) -> None:
             par_rr10[agg] = evaluate(par_run, qrels)["RR@10"]
 
         # --- optional independent encoder for the circularity check -------
+        # Pre-encode segments of every POSITIVE doc once (union over queries):
+        # per-query locality then costs one query encode + one matmul instead
+        # of one encoder call per relevant document (dense-qrels datasets like
+        # trec-covid have hundreds of rel docs per query — the old per-doc
+        # loop made them pathologically slow).
+        positive_ids = sorted({
+            did
+            for qid, rels in qrels.items()
+            for did, rel in rels.items()
+            if rel > 0 and did in text_by_id
+        })
         x_encoder = None
+        x_seg_matrix = None
+        x_doc_seg_idx: dict = {}
         if cfg.locality_encoder is not None:
             x_encoder = build_encoder(cfg.locality_encoder)
             # TF-IDF variants must be fit; fit on the same segment units the
             # paragraph retriever indexed (no-op for pretrained dense models).
             seg_texts = [s for p in passages for s in (segmenter(p["text"]) or [p["text"]])]
             x_encoder.fit(seg_texts)
+            x_seg_texts: list = []
+            for did in positive_ids:
+                segs = segmenter(text_by_id[did]) or [text_by_id[did]]
+                start = len(x_seg_texts)
+                x_seg_texts.extend(segs)
+                x_doc_seg_idx[did] = list(range(start, start + len(segs)))
+            x_seg_matrix = x_encoder.encode(x_seg_texts)
 
         # --- locality features from each query's relevant docs ------------
-        # Primary features use the paragraph-side encoder: for dense models it
-        # is the same pretrained weights; for TF-IDF the segment-fit instance.
+        # Primary features reuse the paragraph retriever's OWN segment matrix
+        # via doc_segment_sims — bitwise the same signal that system scores.
         rows = []
         n_unjudged = 0
         n_no_rel_text = 0
@@ -134,18 +154,26 @@ def run(config_path: str, seed_override: int | None = None) -> None:
             if qid not in doc_pq:
                 n_unjudged += 1  # query lost all judged docs in sampling
                 continue
-            rel_texts = [
-                text_by_id[did]
-                for did, rel in qrels.get(qid, {}).items()
+            rel_ids = [
+                did for did, rel in qrels.get(qid, {}).items()
                 if rel > 0 and did in text_by_id
             ]
-            if not rel_texts:
+            if not rel_ids:
                 n_no_rel_text += 1
                 continue
-            feats = query_locality(q["text"], rel_texts, par_ret.encoder, segmenter)
+            rel_words = [float(len(text_by_id[did].split())) for did in rel_ids]
+
+            sims_by_doc = par_ret.doc_segment_sims(q["text"], rel_ids)
+            feats = query_locality_from_sims(
+                [sims_by_doc[did] for did in rel_ids], rel_words
+            )
             row = {"dataset": dataset, "qid": qid, "doc_rr10": doc_pq[qid], **feats}
             if x_encoder is not None:
-                x_feats = query_locality(q["text"], rel_texts, x_encoder, segmenter)
+                xq = x_encoder.encode([q["text"]], is_query=True)[0]
+                x_sims = x_seg_matrix @ xq
+                x_feats = query_locality_from_sims(
+                    [x_sims[x_doc_seg_idx[did]] for did in rel_ids], rel_words
+                )
                 row.update({f"x_{k}": x_feats[k] for k in FEATURE_KEYS if k != "n_segments"})
             for agg in cfg.aggregations:
                 # Direct indexing on purpose: both per_query dicts come from the
