@@ -1,0 +1,22 @@
+# Scale check: does the granularity delta survive a larger/full pool?
+name: controlled_e5_scifact_full
+datasets: [scifact]
+data_dir: null
+n_docs: 5300
+n_queries: 200
+seed: 42
+split: test
+top_k: 100
+aggregations: [max, topk_mean]
+agg_k: 3
+
+encoder:
+  name: dense
+  model: intfloat/e5-base-v2
+  batch_size: 64
+
+segmentation:
+  mode: sentence_window
+  window: 2
+  stride: 1
+  min_words: 5

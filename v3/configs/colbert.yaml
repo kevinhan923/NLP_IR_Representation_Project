@@ -1,0 +1,23 @@
+# Granularity spectrum under one ColBERT model (late-interaction column).
+# Same pools/seed/segmentation as the M1 controlled runs for comparability.
+name: colbert
+datasets: [scifact, nfcorpus, fiqa, scidocs, trec-covid, webis-touche2020]
+data_dir: null
+n_docs: 2000
+n_queries: 200
+seed: 42
+split: test
+top_k: 100
+aggregations: [max, topk_mean]
+agg_k: 3
+
+encoder:
+  name: colbert
+  model: lightonai/colbertv2.0
+  batch_size: 32
+
+segmentation:
+  mode: sentence_window
+  window: 2
+  stride: 1
+  min_words: 5

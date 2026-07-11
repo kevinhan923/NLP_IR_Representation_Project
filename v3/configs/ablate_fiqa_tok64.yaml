@@ -1,0 +1,22 @@
+# Segmentation/aggregation ablation: is the granularity effect tied to one
+# particular splitting scheme? (4 aggregations evaluated per run)
+name: ablate_fiqa_tok64
+datasets: [fiqa]
+data_dir: null
+n_docs: 2000
+n_queries: 200
+seed: 42
+split: test
+top_k: 100
+aggregations: [max, topk_mean, weighted_topk, softmax_weighted]
+agg_k: 3
+
+encoder:
+  name: dense
+  model: intfloat/e5-base-v2
+  batch_size: 64
+
+segmentation:
+  mode: token_chunk
+  token_size: 64
+  min_words: 3
