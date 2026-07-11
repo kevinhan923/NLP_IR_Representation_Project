@@ -43,7 +43,7 @@ def _sig_block(base_pq, sys_pq, seed):
     return {**sig, **ci}
 
 
-def run(config_path: str, seed_override: int | None = None) -> None:
+def run(config_path: str, seed_override: int | None = None, device: str | None = None) -> None:
     cfg = load_config(config_path)
     if seed_override is not None:
         import dataclasses
@@ -55,6 +55,7 @@ def run(config_path: str, seed_override: int | None = None) -> None:
     enc = ColbertTokenEncoder(
         model_name=cfg.encoder.model or "lightonai/colbertv2.0",
         batch_size=cfg.encoder.batch_size,
+        device=device,
     )
     segmenter = build_segmenter(cfg.segmentation)
 
@@ -158,5 +159,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", required=True)
     parser.add_argument("--seed", type=int, default=None)
+    parser.add_argument("--cpu", action="store_true",
+                        help="force CPU (e.g. smoke tests while the GPU is busy)")
     args = parser.parse_args()
-    run(args.config, seed_override=args.seed)
+    run(args.config, seed_override=args.seed, device="cpu" if args.cpu else None)
