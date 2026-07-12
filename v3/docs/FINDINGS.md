@@ -173,6 +173,41 @@ data contradicts it; claim per-query predictive power.
    (2× index + 2× query encode); the router itself is negligible (ridge on 8
    features). Oracle-vs-fusion headroom may justify the cost story.
 
+## Multi-seed stability (2026-07-12; seeds 42/7/123, full rerun of M1+M2+M3)
+
+> The single-seed objection is now answered. All numbers:
+> `results/*_seed{7,123}.json` + `results/multiseed_summary.json`
+> (per-seed paired sign-flip p computed from saved per-query rows).
+
+**Controlled ΔRR@10 (paragraph − document), mean ± std over 3 seeds:**
+
+| dataset | agg=max | sig seeds | verdict |
+|---|---|---|---|
+| fiqa | −0.066 ± 0.013 | **3/3** | paragraph penalty: rock solid |
+| scidocs | −0.058 ± 0.020 | 2/3 (direction 3/3) | real, seed-sensitive at n=200 |
+| scifact | −0.007 ± 0.009 | 0/3 (topk: 1/3 neg) | no consistent effect |
+| nfcorpus | +0.016 ± 0.016 | 0/3 | positive lean, never significant |
+| trec-covid | +0.019 ± 0.029 | 0/3 (topk 1/3 pos) | ceiling noise — unusable |
+| touche | +0.003 ± 0.005 | 0/3 | no effect (ceiling) |
+
+**M2 metric stability**: selection-set within-dataset spearman of
+`max_minus_mean` = +0.198 / +0.248 / +0.210, all p<1e-4 — very stable.
+Held-out scidocs: +0.134 / +0.168 / +0.251, all positive, seed123 p=0.003 —
+the earlier single-seed p=0.054 concern is resolved (report per-seed values;
+do NOT Fisher-combine, query samples overlap across seeds). Independent-encoder
+x_ version: selection 3/3 positive (2/3 sig); holdout positive but weak (n.s.).
+
+**M3 stability (pooled test nDCG@10 across seeds)**:
+
+- **router_soft is the ONLY system that significantly beats BOTH fixed
+  granularities in ALL 3 seeds** (vs doc p=0.0007/0.0003/0.0039; vs par all
+  p<1e-4; mean 0.6122 ± 0.0095 — also the best non-oracle mean in every seed).
+- global_alpha fails vs document in 1/3 seeds (p=0.09); RRF fails in 2/3.
+  → The per-query router earns its keep as *reliability*, not mean-lift:
+  static fusions are seed/dataset-fragile, the router is not.
+- router_soft vs global_alpha: n.s. in 3/3 (unchanged honest caveat);
+  vs RRF: significant in 2/3. oracle headroom over fusion: 3/3 significant.
+
 ## Limitations / open items
 
 - **Small-pool caveat — CONFIRMED ROBUST (2026-06-29)**: n_docs=2000 does inflate
