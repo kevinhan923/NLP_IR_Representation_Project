@@ -208,6 +208,74 @@ x_ version: selection 3/3 positive (2/3 sig); holdout positive but weak (n.s.).
 - router_soft vs global_alpha: n.s. in 3/3 (unchanged honest caveat);
   vs RRF: significant in 2/3. oracle headroom over fusion: 3/3 significant.
 
+## Queue-2 hardening results (2026-07-12): ColBERT, MiniLM, scale, ablations
+
+### ColBERT compression spectrum (`results/colbert.json`)
+
+One ColBERT model (colbertv2.0 via pylate), three granularities sharing the
+SAME token embeddings: mean-pooled document vector / mean-pooled segment
+vectors + max agg / raw-token MaxSim (late interaction). RR@10:
+
+| dataset | doc-pooled | paragraph(max) | late interaction |
+|---|---|---|---|
+| scifact | 0.342 | 0.368 | **0.739** (p<1e-4 vs both) |
+| nfcorpus | 0.238 | 0.270 | **0.525** (p<1e-4) |
+| fiqa | 0.317 | 0.392 (+0.075, p=.001) | **0.698** (p<1e-4) |
+| scidocs | 0.235 | 0.288 (+0.053, p=.009) | **0.553** (p<1e-4) |
+| trec-covid | 0.493 | 0.591 (+0.098, p=.03) | **0.950** (p<1e-4) |
+| touche | 0.808 | 0.896 | **0.990** (p<1e-4) |
+
+1. **The spectrum is monotone in every dataset**: tokens > segments > single
+   vector, all late-vs-* differences p<1e-4. Compression loses information,
+   period — the only question is where the loss bites.
+2. **Under a lossy single-vector representation, paragraphs HELP** — even on
+   fiqa (+0.075, the same dataset where E5 shows −0.083). Combined with M1:
+   the sign of the granularity effect flips with single-vector quality.
+   Weak pooling → splitting recovers information; strong pooling (E5) →
+   splitting destroys context. This completes the "encoder strength gates and
+   REVERSES the effect" narrative.
+3. ⚠️ Caveat for the paper: pooled-ColBERT cells are off-label usage (the
+   model was trained for MaxSim, not mean-pool cosine) — present them as a
+   controlled compression study within one model, not as a tuned baseline.
+   Late-interaction absolute numbers are comparable to E5-doc (above it on
+   nfcorpus/trec-covid, below on fiqa/scidocs).
+
+### Encoder dose-response: MiniLM fills the middle (`controlled_dense_minilm.json`)
+
+| encoder (strength) | scifact Δ | nfcorpus Δ | fiqa Δ |
+|---|---|---|---|
+| TF-IDF (very weak) | +0.020 ns | +0.043 ns | −0.004 ns |
+| MiniLM (mid) | +0.040 (p=.037) | +0.026 ns | −0.032 ns |
+| E5 / BGE (strong) | ~0 ns | +0.02..0.03 ns | **−0.083/−0.061 sig** |
+
+The fiqa penalty GROWS with encoder strength (−0.004 → −0.032 → −0.083):
+a clean dose-response supporting the M1 mechanism. (MiniLM scifact +0.040
+p=.037 is borderline and would not survive Holm — do not oversell.)
+
+### Scale robustness (E5)
+
+- **scidocs @10k docs (5x)**: penalty persists, still significant
+  (max Δ=−0.072 p=.001; topk −0.058 p=.005). Both penalized datasets are now
+  scale-validated (fiqa @10k was done in M1).
+- **scifact @FULL corpus (5183)**: Δ=+0.003/−0.015, ns — the null is now
+  free of any sampling caveat.
+- **nfcorpus @FULL corpus (3633)**: Δ=+0.011/+0.008, ns — the 2k-pool
+  "positive lean" (+0.03..0.04) largely disappears at full scale; treat it as
+  a small-pool artifact, don't build claims on it.
+
+### Segmentation x aggregation ablation (E5, fiqa vs scifact, 4 aggs each)
+
+fiqa ΔRR@10 (agg=max) by granularity: **w1 −0.122* > tok64 −0.034* ≈
+w2 −0.083* > w3 −0.033 ns** — the penalty scales with splitting fineness
+(finer = worse), robust across max/topk/weighted_topk; softmax_weighted is
+uniformly catastrophic on fiqa (−0.14..−0.32) — near-mean averaging dilutes.
+scifact: null at w2/w3 across ALL aggregations (robust), but significant
+penalties appear at the extremes (w1 max −0.061*, tok64 −0.053*).
+**Refined claim**: below a granularity floor (single sentences / 64-token
+chunks) EVERY dataset loses; above it, the holistic-vs-local character of
+the dataset decides. The fiqa-vs-scifact contrast is not tied to one
+splitting scheme.
+
 ## Limitations / open items
 
 - **Small-pool caveat — CONFIRMED ROBUST (2026-06-29)**: n_docs=2000 does inflate
@@ -240,3 +308,11 @@ x_ version: selection 3/3 positive (2/3 sig); holdout positive but weak (n.s.).
   (router_soft +0.018/+0.036, p≤3e-4). Router does NOT significantly beat static
   fusion (+0.003, p=0.28) but removes fusion's significant scidocs failure;
   oracle shows +0.029 (p<1e-4) headroom above fusion for better routers.
+- 2026-07-12: multi-seed (42/7/123) + RRF baseline DONE — see stability section.
+- 2026-07-12: queue-2 hardening DONE: ColBERT spectrum (monotone, sign of the
+  granularity effect flips with single-vector quality), MiniLM dose-response,
+  scale checks (scidocs 10k penalty persists; scifact/nfcorpus full-corpus
+  nulls), seg x agg ablation (fiqa penalty scales with fineness; scifact null
+  robust at moderate granularity, everyone loses below the granularity floor).
+  Figures fig1-fig3 regenerated from final data. Experimental phase COMPLETE —
+  remaining work is the paper text itself.
