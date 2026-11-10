@@ -1,0 +1,33 @@
+# Sensitivity check requested by a reviewer (2026-09-14): the controlled
+# comparison rerun with the vectorizer of the TWO-STAGE paragraph encoder
+# (v1 beir_transfer.json / msmarco_grid_full.json): 1-2-grams, min_df=2,
+# sublinear TF, and fitting on the first fit_cap texts of each system's own
+# unit collection (v1's fit_text_cap). Everything else is identical to
+# controlled_tfidf_paper1_fiqa.yaml, so the only change from that run is
+# the vectorizer configuration.
+name: controlled_tfidf_paper1_fiqa_matched
+datasets: [fiqa]
+data_dir: null
+n_docs: 60000
+n_queries: 2000
+seed: 42
+split: test
+top_k: 100
+aggregations: [max, topk_mean]
+agg_k: 3
+
+encoder:
+  name: tfidf_projection
+  r: 192
+  max_features: 80000
+  seed: 42
+  ngram_max: 2
+  min_df: 2
+  sublinear_tf: true
+  fit_cap: 15000
+
+segmentation:
+  mode: sentence_window
+  window: 2
+  stride: 1
+  min_words: 5

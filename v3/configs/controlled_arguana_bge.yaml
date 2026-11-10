@@ -1,0 +1,19 @@
+name: controlled_arguana_bge
+datasets: [arguana]
+data_dir: null
+n_docs: 2000
+n_queries: 200
+seed: 42
+split: test
+top_k: 100
+aggregations: [max, topk_mean]
+agg_k: 3
+encoder:
+  name: dense
+  model: BAAI/bge-base-en-v1.5
+  batch_size: 64
+segmentation:
+  mode: sentence_window
+  window: 2
+  stride: 1
+  min_words: 5

@@ -1,0 +1,32 @@
+# TRUE controlled comparison replicating paper 1's BEIR transfer setting.
+#
+# Paper 1 (v1/src/experiment_beir.py) was NOT controlled: its "document-level"
+# run is the raw sparse stage-1 TF-IDF ranking (LocalTfidfRetriever, ~100k
+# sparse features, no random projection) while only the paragraph side used the
+# 192-d GRP encoder, and both were confined to stage-1's own top-100 pool.
+# This config runs the same encoder (TF-IDF -> GRP-192 -> L2) on BOTH sides over
+# the FULL corpus with the FULL test query set, so only granularity differs.
+#
+# Encoder/segmentation parameters copied from v1/configs/beir_transfer.json.
+name: controlled_tfidf_paper1_fiqa
+datasets: [fiqa]
+data_dir: null           # -> v1/data/beir
+n_docs: 60000            # larger than the fiqa corpus (57,638) -> whole corpus is used
+n_queries: 2000          # larger than the fiqa test split (648) -> all judged queries
+seed: 42
+split: test
+top_k: 100
+aggregations: [max, topk_mean]
+agg_k: 3                 # paper 1 reported topk_mean_k3
+
+encoder:
+  name: tfidf_projection
+  r: 192                 # beir_transfer.json projected_dim
+  max_features: 80000    # beir_transfer.json max_features
+  seed: 42
+
+segmentation:
+  mode: sentence_window  # beir_transfer.json selected_setting: sent2_stride1
+  window: 2
+  stride: 1
+  min_words: 5

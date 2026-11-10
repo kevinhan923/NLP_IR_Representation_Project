@@ -21,10 +21,19 @@ class EncoderConfig:
     seed: int = 42
     model: str = ""        # for name == "dense", e.g. "intfloat/e5-base-v2"
     batch_size: int = 64
+    # TF-IDF vectorizer knobs (tfidf_projection only). Defaults = the simplified
+    # controlled vectorizer; set ngram_max=2, min_df=2, sublinear_tf=true and a
+    # fit_cap to match the two-stage paragraph encoder of v1.
+    ngram_max: int = 1
+    min_df: int = 1
+    sublinear_tf: bool = False
+    fit_cap: int = 0       # 0 = fit on every text; N = fit on the first N texts
 
     def __post_init__(self) -> None:
         if self.name == "dense" and not self.model:
             raise ValueError("dense encoder requires 'model'")
+        if self.ngram_max < 1 or self.min_df < 1 or self.fit_cap < 0:
+            raise ValueError("encoder.ngram_max/min_df must be >= 1 and fit_cap >= 0")
 
 
 @dataclass(frozen=True)

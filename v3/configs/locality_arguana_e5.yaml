@@ -1,0 +1,23 @@
+name: locality_arguana_e5
+datasets: [arguana]
+data_dir: null
+n_docs: 2000
+n_queries: 200
+seed: 42
+split: test
+top_k: 100
+aggregations: [max, topk_mean]
+agg_k: 3
+encoder:
+  name: dense
+  model: intfloat/e5-base-v2
+  batch_size: 64
+locality_encoder:
+  name: dense
+  model: sentence-transformers/all-MiniLM-L6-v2
+  batch_size: 64
+segmentation:
+  mode: sentence_window
+  window: 2
+  stride: 1
+  min_words: 5

@@ -289,6 +289,90 @@ splitting scheme.
 - Only one segmentation (2-sentence windows) and two aggregations tested so far.
 - nfcorpus's consistent-but-insignificant positive lean is unresolved (needs larger n).
 
+## Batch-1 hardening re-analyses (2026-07-23; no new retrieval)
+
+> Pure re-analysis of saved results. Code: `scripts/analysis_batch1.py`;
+> output: `results/analysis_batch1.json`. All four passed / informative.
+
+1. **Family-wise correction (Holm + BH) over the 15-cell primary grid
+   (encoder x dataset, agg=max).** The three headline penalties SURVIVE Holm:
+   E5-fiqa Holm p=0.0015, E5-scidocs 0.0015, BGE-fiqa 0.0247 (BH q≤0.01).
+   Cohen's d = −0.22..−0.28 (honest small-medium). MiniLM-scifact (+0.040)
+   does NOT survive (Holm 0.45) — matches "do not oversell".
+2. **Power.** E5 scifact/nfcorpus nulls are genuinely powered: MDE@80% ≈
+   0.030 (exact per-query SD, n≈600) / 0.05 (CI-recovered) — well below the
+   0.083 reference, so these nulls are evidence of absence, not low power.
+   trec-covid (n=50, MDE 0.102) confirmed underpowered → justifiably dropped.
+3. **Locality robustness.** Within-dataset Spearman of `max_minus_mean`:
+   scifact +0.27..0.39, fiqa +0.32..0.39 (all p<1e-3), nfcorpus +0.11..0.13
+   (weak, ns), scidocs +0.13..0.25. NOT fiqa-driven. Pooled dataset-demeaned
+   bootstrap CI excludes 0 in all 3 seeds; drops to +0.13 after removing the
+   5% most-influential points; Kendall τ=+0.17; independent-encoder x_ +0.136
+   (p=3.6e-4). Robust.
+4. **Denoised oracle.** Cross-seed-STABLE oracle (vote on other seeds) recovers
+   89% of the naive oracle lift → most of the +0.03 headroom is real, not
+   label noise; 26% of queries flip their better side across seeds (irreducible).
+   (The permutation "noise floor" in the script is NOT a valid null — it
+   measures |doc−par|; ignore that number, keep the stable-oracle result.)
+
+## M4: DISTRACTOR-side locality resolves the cross-dataset puzzle (2026-07-23)
+
+> The open M2 puzzle (dataset-level mean relevant-doc locality does NOT order
+> the penalties) is RESOLVED by a distractor-side quantity. Code:
+> `scripts/run_distractor_locality.py`; results:
+> `results/distractor_locality_e5{,_seed7,_seed123}.json`.
+> Per query, from the SAME E5 segment matrix: for each competing (top-ranked
+> non-relevant) doc, `inflation(d)=max_seg−doc_vec_sim`,
+> `peak(d)=max_seg−mean_seg`; query features `inflation_advantage` (mean
+> inflation of distractors − of relevant docs) and `competitive_gap_shift`
+> (how much max-aggregation shifts the best-distractor-vs-best-relevant gap).
+
+- **Per-query predictor, 3-seed stable**: pooled dataset-demeaned
+  `competitive_gap_shift` vs delta_max ρ = −0.464 / −0.429 / −0.414 (seeds
+  42/7/123; all p<1e-38, n≈890) — roughly **2x the relevant-side
+  `max_minus_mean` (+0.25)**, and negative/​significant on EVERY informative
+  dataset (scifact −0.56, fiqa −0.54, scidocs −0.55, nfcorpus −0.49,
+  trec-covid −0.52).
+- **Cross-dataset ORDERING (the puzzle)**: mean `inflation_advantage`
+  rank-orders the 4 non-ceiling datasets' penalties **perfectly, ρ=−1.000 in
+  ALL 3 seeds**, where relevant-side mean locality could not (fiqa 0.030 >
+  scidocs 0.020 vs penalties scidocs<fiqa). Mechanism: under max-aggregation a
+  flat relevant doc is only punished when a competitor has a peaked,
+  locally-similar fragment that overtakes it.
+- **Not the max-of-many confound**: `n_seg_distractor_mean` ρ≈0 per-query and
+  +1.0 at dataset level (WRONG sign for a count artifact).
+- **Implication for the paper**: the distractor-side signal is a stronger,
+  more fundamental predictor than the published relevant-side `max_minus_mean`
+  — candidate to become the primary C2 metric (relevant-side as the initial,
+  weaker version).
+
+## M5: ArguAna out-of-sample confirmation (2026-07-23, PRE-REGISTERED)
+
+> Pre-registration committed BEFORE running: `docs/preregistration_arguana.md`.
+> ArguAna = counter-argument retrieval (holistic-relevance, new domain).
+> Downloaded to `v1/data/beir/arguana/`. Configs `controlled_arguana_*`,
+> `locality_arguana_e5`. Honest scorecard vs the 4 locked predictions:
+
+- **P1 penalty — MIXED (honest)**: BGE Δ=**−0.109 (p<0.001)** — a strong
+  penalty, the 3rd dataset (after fiqa, scidocs) where a strong encoder is
+  significantly hurt → dents the "only 2 datasets" objection. BUT E5 Δ=−0.012
+  (ns) — predicted a penalty, got none. The E5/BGE split is itself
+  gating-CONSISTENT: on ArguAna BGE is the stronger single-vector encoder
+  (doc RR@10 0.685 vs E5 0.519), and the stronger encoder shows the penalty.
+- **P2 gate — holds (marginal)**: TF-IDF Δ=−0.041 (p=0.074), not significant.
+- **P3 relevant-side — SHAKY out of sample**: `max_minus_mean` ρ=+0.183
+  (p=0.013, predicted sign) but the independent-encoder x_ version FLIPS to
+  −0.285 (p=1e-4). The relevant-side metric does not transfer cleanly to
+  ArguAna.
+- **P4 distractor mechanism — STRONG PASS**: `competitive_gap_shift` ρ=−0.534
+  (p=4e-16), `inflation_advantage` ρ=−0.687 (p=4e-29) — out-of-sample, on a
+  domain it was never fit on, EVEN STRONGER than in-sample. The distractor
+  mechanism generalizes where the relevant-side metric and even the net sign
+  do not.
+- **Net reading**: the domain-general, robust result is the distractor-side
+  MECHANISM (M4), not the dataset-level sign. Report ArguAna honestly as
+  BGE-confirms / E5-boundary, and lead C2 with the distractor-side signal.
+
 ## Status log
 
 - 2026-06-29: M0 (TF-IDF) + M1 (E5, BGE) complete on 3 datasets, n_docs=2000.
@@ -316,3 +400,31 @@ splitting scheme.
   robust at moderate granularity, everyone loses below the granularity floor).
   Figures fig1-fig3 regenerated from final data. Experimental phase COMPLETE —
   remaining work is the paper text itself.
+- 2026-07-23: Batch-1 hardening (Holm/BH correction, power, locality
+  robustness, denoised oracle) — foundation confirmed solid (see section above).
+- 2026-07-23: M4 distractor-side locality DONE (3 seeds) — resolves the M2
+  cross-dataset puzzle (ordering ρ=−1.0 every seed; per-query ρ≈−0.44, 2x the
+  relevant-side signal). Strongest new result.
+- 2026-07-23: M5 ArguAna out-of-sample (pre-registered) — BGE penalty −0.109***
+  confirms (3rd penalized dataset), E5 null is an honest encoder boundary; the
+  distractor mechanism P4 generalizes strongly (ρ=−0.53..−0.69). Relevant-side
+  metric P3 shaky out of sample → elevate distractor-side to primary.
+
+## M0-bis (2026-09-14): 论文 1 受控对照的"向量化器匹配"敏感性检验
+
+审稿意见:两阶段设置与受控设置的 TF-IDF 向量化器参数不一致(n-gram、sublinear TF、min_df、拟合范围),要么统一重跑,要么弱化"受控后效应消失"的结论。
+已重跑:`configs/controlled_tfidf_paper1_{small,fiqa,msmarco_hard}_matched.yaml`——受控设置不变,仅把向量化器换成两阶段段落编码器的配置
+(1–2-gram、min_df=2、sublinear TF、每个系统在**自己单元集合的前 15,000 条**(MS MARCO 20,000)上拟合,即 v1 的 fit_text_cap)。
+结果(RR@10;Δ = 段落级 − 文档级;配对随机化检验):
+
+| 语料 | Doc. | Δ max (p) | Δ topk_mean_k3 (p) |
+|---|---|---|---|
+| MS MARCO (rel≥2, 重建池, n=43) | 0.5788 | −0.0468 (0.62) | −0.0164 (0.83) |
+| NFCorpus (n=323) | 0.2817 | **+0.0658 (0.003)** | **+0.0641 (0.001)** |
+| SciFact (n=300) | 0.2664 | +0.0529 (0.023) | **+0.0725 (0.002)** |
+| FiQA (n=648) | 0.1104 | −0.0133 (0.21) | +0.0092 (0.39) |
+
+8 个检验做 Holm 校正后 3 个仍显著(NFCorpus 两种聚合、SciFact topk_mean),**全部偏向段落级**;没有任何检验偏向文档级。
+结论:两阶段的"文档级大幅领先"在两种向量化器下都不再出现(主线成立);但"受控后无差异"依赖向量化器——
+换成两阶段向量化器后,小语料上段落级有中等幅度的显著优势。论文已据此弱化结论(摘要/引言/§5.3/结论,新增 Table 3、Figure 2 三角标记)。
+注意:两阶段向量化器让文档级绝对分数下降更多(如 NFCorpus 0.39→0.28),原因未单独拆解(bigram/sublinear/min_df/拟合上限四者混合),可作后续消融。

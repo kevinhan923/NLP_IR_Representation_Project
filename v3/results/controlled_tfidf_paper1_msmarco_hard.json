@@ -1,0 +1,47 @@
+{
+  "config_name": "controlled_tfidf_paper1_msmarco_hard",
+  "encoder": "tfidf_projection",
+  "results": {
+    "msmarco-doc-hard": {
+      "n_docs": 50000,
+      "n_queries_judged": 43,
+      "document": {
+        "RR@10": 0.6786821705426356,
+        "nDCG@10": 0.4880690273867472,
+        "R@100": 0.5854068250243625
+      },
+      "paragraph_by_agg": {
+        "max": {
+          "paragraph": {
+            "RR@10": 0.7110741971207089,
+            "nDCG@10": 0.5273340056688435,
+            "R@100": 0.6672679822846341
+          },
+          "delta_rr10": 0.032392026578073274,
+          "significance_rr10": {
+            "mean_diff": 0.03239202657807308,
+            "p_value": 0.5955,
+            "n": 43,
+            "ci_low": -0.08599252491694354,
+            "ci_high": 0.14634966777408634
+          }
+        },
+        "topk_mean": {
+          "paragraph": {
+            "RR@10": 0.795219638242894,
+            "nDCG@10": 0.5583672780744908,
+            "R@100": 0.6739708206328928
+          },
+          "delta_rr10": 0.11653746770025841,
+          "significance_rr10": {
+            "mean_diff": 0.11653746770025837,
+            "p_value": 0.047,
+            "n": 43,
+            "ci_low": 0.006456718346253231,
+            "ci_high": 0.22623062015503873
+          }
+        }
+      }
+    }
+  }
+}

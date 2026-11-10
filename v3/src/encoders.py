@@ -36,17 +36,42 @@ class TfidfProjectionEncoder:
     Symmetric: ignores is_query.
     """
 
-    def __init__(self, r: int = 192, max_features: int = 50000, seed: int = 42):
+    def __init__(
+        self,
+        r: int = 192,
+        max_features: int = 50000,
+        seed: int = 42,
+        ngram_max: int = 1,
+        min_df: int = 1,
+        sublinear_tf: bool = False,
+        fit_cap: int = 0,
+    ):
+        """Defaults reproduce the simplified vectorizer of the controlled runs.
+
+        ngram_max / min_df / sublinear_tf / fit_cap let a run match the
+        two-stage paragraph encoder instead (v1: 1-2-grams, min_df=2,
+        sublinear TF, fit on the first `fit_cap` texts); fit_cap=0 means fit
+        on every text.
+        """
         from sklearn.feature_extraction.text import TfidfVectorizer
         from sklearn.random_projection import GaussianRandomProjection
 
         self.r = r
-        self.vectorizer = TfidfVectorizer(max_features=max_features, stop_words="english")
+        self.fit_cap = fit_cap
+        self.vectorizer = TfidfVectorizer(
+            max_features=max_features,
+            stop_words="english",
+            ngram_range=(1, ngram_max),
+            min_df=min_df,
+            sublinear_tf=sublinear_tf,
+        )
         self.projector = GaussianRandomProjection(n_components=r, random_state=seed)
         self._fitted = False
 
     def fit(self, texts: List[str]) -> "TfidfProjectionEncoder":
-        sparse = self.vectorizer.fit_transform(texts)
+        # Like v1's fit_text_cap: fit on the FIRST fit_cap texts, in order.
+        fit_texts = texts[: self.fit_cap] if self.fit_cap > 0 else texts
+        sparse = self.vectorizer.fit_transform(fit_texts)
         self.projector.fit(sparse)
         self._fitted = True
         return self
@@ -114,7 +139,13 @@ class DenseEncoder:
 def build_encoder(cfg) -> Encoder:
     """Construct an encoder from an EncoderConfig (or duck-typed equivalent)."""
     if cfg.name == "tfidf_projection":
-        return TfidfProjectionEncoder(r=cfg.r, max_features=cfg.max_features, seed=cfg.seed)
+        return TfidfProjectionEncoder(
+            r=cfg.r, max_features=cfg.max_features, seed=cfg.seed,
+            ngram_max=getattr(cfg, "ngram_max", 1),
+            min_df=getattr(cfg, "min_df", 1),
+            sublinear_tf=getattr(cfg, "sublinear_tf", False),
+            fit_cap=getattr(cfg, "fit_cap", 0),
+        )
     if cfg.name == "dense":
         if not getattr(cfg, "model", ""):
             raise ValueError("dense encoder requires cfg.model (e.g. 'intfloat/e5-base-v2')")

@@ -1,0 +1,44 @@
+# Controlled counterpart to Section 6.2, using the OFFICIAL TREC DL 2019
+# relevance threshold (rel >= 2) rather than rel > 0.
+#
+# With rel > 0 the pool holds 6,524 relevant documents out of 50,000 (13%) and
+# 153 per query, which saturates RR@10 near 1.0 and compresses the contrast.
+# rel >= 2 is the threshold the TREC DL document task itself uses for binary
+# relevance: 1,982 relevant documents (4% of the pool), 46 per query.
+# Same corpus and same queries as controlled_tfidf_paper1_msmarco; only the
+# relevance judgments differ.
+#
+# Controlled counterpart to the paper's grid / multi-seed experiments (Section 6.2).
+#
+# Those ran in the TWO-STAGE setting AND on a pool built by taking the first
+# 50,000 documents in corpus order, which put only 110 of the 6,524 relevant
+# documents in the pool (1.69%) and left 13 of 43 queries with no reachable
+# answer. The pool used here is exported by scripts/export_msmarco_beir.py:
+# every relevant document is forced in, then distractors fill it to the same
+# 50,000 documents. Both systems share one encoder and rank the whole pool, so
+# representation granularity is the only difference.
+#
+# Encoder/segmentation parameters copied from v1/configs/msmarco_grid_full.json
+# so this is a like-for-like controlled version of what Section 6.2 reports.
+name: controlled_tfidf_paper1_msmarco_hard
+datasets: [msmarco-doc-hard]
+data_dir: null            # -> v1/data/beir
+n_docs: 60000             # larger than the exported pool -> use all of it
+n_queries: 200            # larger than the 43 judged queries -> use all of them
+seed: 42
+split: test
+top_k: 100
+aggregations: [max, topk_mean]
+agg_k: 3
+
+encoder:
+  name: tfidf_projection
+  r: 256                  # msmarco_grid_full.json projected_dim
+  max_features: 120000    # msmarco_grid_full.json max_features
+  seed: 42
+
+segmentation:
+  mode: sentence_window   # grid's selected setting: sent2_stride2
+  window: 2
+  stride: 2
+  min_words: 5
